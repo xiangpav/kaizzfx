@@ -1,397 +1,552 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KAIZZ AI | Luxury Institutional Neural Trading Terminal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>KAIZZ — Luxury Neural Trading Terminal</title>
+  <meta name="description" content="KAIZZ is a luxury AI trading terminal concept: 3D neural core, live-style charts, BUY / SELL signals with entry, SL and TP1–TP3, plus a sovereign lot and risk engine." />
+  <meta name="theme-color" content="#050507" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="KAIZZ — Luxury Neural Trading Terminal" />
+  <meta property="og:description" content="A luxury AI trading terminal concept: interactive 3D neural core, live-style charts, BUY / SELL signals with entry, SL and TP1–TP3, and a sovereign lot & risk engine." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="KAIZZ — Luxury Neural Trading Terminal" />
+  <meta name="twitter:description" content="Precision gold & FX intelligence in obsidian and gold. Simulated analytics, interactive 3D core, signals and risk sizing." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050507'/%3E%3Cpolygon points='32,6 54,17 58,38 46,57 18,57 6,38 10,17' fill='none' stroke='%23D4AF37' stroke-width='2'/%3E%3Cpath d='M25 20v24M25 33l13-13M28 30l12 14' stroke='%23F3E5AB' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Three.js (r128) for 3D Luxury Core & Particle Field -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-  <!-- Google Fonts: Cinzel, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="min-h-screen flex flex-col selection:bg-amber-400 selection:text-black">
+<body>
 
-  <!-- Ambient Fullscreen 3D WebGL Background Canvas -->
-  <canvas id="bg-3d-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-75"></canvas>
-
-  <!-- Toast Notification Banner -->
-  <div id="kaizz-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="kaizz-glass px-5 py-3.5 rounded-xl border border-amber-400/50 flex items-center gap-3 shadow-2xl">
-      <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-      <span id="kaizz-toast-msg" class="text-sm font-medium text-amber-100 tracking-wide">Signal copied to clipboard</span>
+  <!-- ░░ PRELOADER ░░ -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader__inner">
+      <svg class="preloader__crest" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="crestGold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#FFF6CC" />
+            <stop offset=".5" stop-color="#D4AF37" />
+            <stop offset="1" stop-color="#8C6A10" />
+          </linearGradient>
+        </defs>
+        <polygon points="32,4 55,15 60,37 47,59 17,59 4,37 9,15" stroke="url(#crestGold)" stroke-width="1.6" fill="rgba(212,175,55,.05)" />
+        <path d="M23 22v20M23 32l13-10M26 29.5l11 12.5" stroke="url(#crestGold)" stroke-width="2.6" stroke-linecap="round" />
+        <path d="M18 15l4-5 8 3 8-3 4 5" stroke="url(#crestGold)" stroke-width="1.6" />
+      </svg>
+      <div class="preloader__name">KAIZZ</div>
+      <div class="preloader__bar"><span></span></div>
+      <div class="preloader__note">INITIALISING NEURAL CORE</div>
     </div>
   </div>
 
-  <!-- 1. LIVE MARKET TICKER BAR & NAVIGATION -->
-  <header class="sticky top-0 z-40 bg-[#070709]/90 backdrop-blur-xl border-b border-amber-400/25">
-    <div class="flex items-center justify-between border-b border-amber-400/15 px-3 sm:px-6 py-1.5 text-xs bg-black/50">
-      <div class="flex items-center gap-2 shrink-0">
-        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="font-mono uppercase tracking-widest text-amber-100 font-semibold">KILLZONE:</span>
-        <span id="killzone-badge" class="px-2 py-0.5 rounded-md bg-amber-400/15 border border-amber-400/40 text-amber-300 font-mono font-bold text-[11px]">NY / LONDON OVERLAP</span>
-      </div>
+  <!-- ░░ AMBIENT LAYERS ░░ -->
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient__glow ambient__glow--a"></div>
+    <div class="ambient__glow ambient__glow--b"></div>
+    <div class="ambient__glow ambient__glow--c"></div>
+    <div class="ambient__grid"></div>
+    <div class="grain"></div>
+  </div>
+  <canvas id="dust-canvas" aria-hidden="true"></canvas>
 
-      <!-- Scrolling Ticker Stream -->
-      <div class="overflow-hidden mx-4 flex-1">
-        <div id="ticker-track" class="animate-ticker gap-8 items-center font-mono"></div>
+  <!-- ░░ HEADER ░░ -->
+  <header class="site-header" id="site-header">
+    <div class="ticker-bar">
+      <div class="ticker-bar__status">
+        <span class="dot dot--live"></span>
+        <span class="label">KILLZONE</span>
+        <span class="chip chip--gold" id="killzone-chip">NY / LONDON OVERLAP</span>
       </div>
-
-      <div class="hidden md:flex items-center gap-2 text-amber-100/80 font-mono shrink-0">
-        <span class="text-[11px]">NEURAL ENGINE v4.9</span>
-        <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px]">99.98% UPTIME</span>
+      <div class="ticker-bar__viewport" aria-hidden="true">
+        <div class="ticker-track" id="ticker-track"></div>
+      </div>
+      <div class="ticker-bar__meta">
+        <span>NEURAL ENGINE v4.9</span>
+        <span class="chip chip--emerald">99.98% UPTIME</span>
+        <span class="ticker-bar__clock" id="utc-clock">--:--:-- UTC</span>
       </div>
     </div>
 
-    <!-- Main Navigation & Custom Luxury SVG Crest Logo -->
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3.5">
-        <div class="relative w-12 h-12 rounded-xl bg-gradient-to-br from-[#14161D] to-[#070709] border border-amber-400/45 flex items-center justify-center group">
-          <svg viewBox="0 0 64 64" class="w-9 h-9 transition-transform duration-500 group-hover:scale-110" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <nav class="nav">
+      <a class="brand" href="#top" aria-label="KAIZZ home">
+        <span class="brand__crest">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="kaizzGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#FFF6CC" />
-                <stop offset="50%" stop-color="#D4AF37" />
-                <stop offset="100%" stop-color="#8C6A10" />
+              <linearGradient id="brandGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#FFF6CC" />
+                <stop offset=".5" stop-color="#D4AF37" />
+                <stop offset="1" stop-color="#8C6A10" />
               </linearGradient>
-              <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="1.8" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
             </defs>
-            <polygon points="32,3 54,14 60,36 46,58 18,58 4,36 10,14" stroke="url(#kaizzGoldGrad)" stroke-width="1.8" fill="rgba(212,175,55,0.06)" />
-            <path d="M22 17L26 11L32 16L38 11L42 17H22Z" fill="url(#kaizzGoldGrad)" filter="url(#goldGlow)" />
-            <path d="M13 21C13 27 17 31 23 32L20 26L13 21Z" fill="url(#kaizzGoldGrad)" />
-            <path d="M51 21C51 27 47 31 41 32L44 26L51 21Z" fill="url(#kaizzGoldGrad)" />
-            <polygon points="23,24 41,24 45,35 32,51 19,35" stroke="url(#kaizzGoldGrad)" stroke-width="2" fill="rgba(13,14,18,0.85)" />
-            <path d="M27 29V42M27 35.5L36 29M30.5 33L37 42" stroke="#F3E5AB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            <polygon points="32,4 55,15 60,37 47,59 17,59 4,37 9,15" stroke="url(#brandGold)" stroke-width="1.7" fill="rgba(212,175,55,.06)" />
+            <path d="M24 20v24M24 32.5l14-12M27 28l12 16" stroke="url(#brandGold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M17 16l5-6 10 4 10-4 5 6" stroke="url(#brandGold)" stroke-width="1.5" />
           </svg>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-display text-xl sm:text-2xl font-extrabold tracking-widest text-gold-metallic">KAIZZ AI</h1>
-            <span class="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded-full bg-amber-400/15 text-amber-200 border border-amber-400/40">BANE LUXURY</span>
-          </div>
-          <p class="text-[11px] sm:text-xs text-zinc-400 tracking-wider uppercase font-medium">Institutional Liquidity &amp; Neural Execution</p>
-        </div>
+        </span>
+        <span class="brand__text">
+          <span class="brand__row">
+            <span class="brand__name">KAIZZ</span>
+            <span class="badge-soft">BANE LUXURY</span>
+          </span>
+          <span class="brand__tag">Institutional Liquidity &amp; Neural Execution</span>
+        </span>
+      </a>
+
+      <div class="nav__links" id="nav-links">
+        <a href="#terminal" data-nav>Terminal</a>
+        <a href="#vault" data-nav>Signal Vault</a>
+        <a href="#risk" data-nav>Risk Engine</a>
+        <a href="#doctrine" data-nav>Doctrine</a>
       </div>
 
-      <!-- Quick Action Nav Controls -->
-      <div class="flex items-center gap-2.5 sm:gap-4">
-        <button type="button" onclick="scrollToSection('scanner-terminal')" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-amber-100 bg-[#14161D]/80 border border-amber-400/30 hover:border-amber-300 transition">
-          Live Terminal
-        </button>
-        <button type="button" onclick="switchScannerTab('vision'); scrollToSection('scanner-terminal')" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-zinc-200 bg-[#14161D]/80 border border-white/10 hover:border-amber-400/50 transition">
-          Vision AI Scan
-        </button>
-        <button type="button" onclick="triggerQuickScan()" class="btn-gold-luxury px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm uppercase flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+      <div class="nav__actions">
+        <button type="button" class="btn btn--ghost nav__hide-sm" id="nav-vision">Vision AI</button>
+        <button type="button" class="btn btn--gold" id="nav-scan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>
           <span>Scan AI</span>
+        </button>
+        <button type="button" class="nav__burger" id="nav-burger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
         </button>
       </div>
     </nav>
   </header>
 
-  <!-- MAIN CONTENT CONTAINER -->
-  <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-10">
+  <main id="top">
 
-    <!-- HERO SECTION: 3D INTERACTIVE SHOWCASE + EXECUTIVE METRICS -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-      <div class="lg:col-span-7 space-y-5">
-        <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/35 text-amber-200 text-xs font-mono tracking-wider">
-          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span>PRIVATE SOVEREIGN ALGORITHMIC SUITE • MA-13 + ORDER BLOCKS</span>
+    <!-- ░░ HERO ░░ -->
+    <section class="hero container">
+      <div class="hero__copy" data-reveal>
+        <div class="eyebrow">
+          <span class="dot dot--live"></span>
+          PRIVATE SOVEREIGN ALGORITHMIC SUITE · MA-13 + ORDER BLOCKS
         </div>
 
-        <h2 class="font-display text-3xl sm:text-5xl font-black leading-tight tracking-wide text-white">
-          PRECISION <span class="text-gold-metallic">GOLD &amp; FX</span><br />
-          NEURAL INTELLIGENCE
-        </h2>
+        <h1 class="hero__title">
+          <span class="hero__line">Precision <span class="gold-text">Gold &amp; FX</span></span>
+          <span class="hero__line">Neural Intelligence</span>
+        </h1>
 
-        <p class="text-zinc-300 text-sm sm:text-base max-w-2xl leading-relaxed">
-          Engineered for institutional execution. <strong class="text-amber-100">KAIZZ AI</strong> tracks liquidity sweeps, Moving Average 13 dynamic equilibrium, and high-probability <span class="text-emerald-400 font-semibold">BUY / SELL</span> execution zones with exact <span class="text-rose-400 font-mono">SL</span> and multi-tier <span class="text-emerald-400 font-mono">TP1–TP3</span> targets in real time.
+        <p class="hero__lede">
+          Engineered for execution. <strong>KAIZZ</strong> reads liquidity sweeps, the MA-13 dynamic
+          equilibrium and session momentum, then returns a <span class="txt-up">BUY</span> or
+          <span class="txt-down">SELL</span> zone with exact <span class="txt-down mono">SL</span> and
+          multi-tier <span class="txt-up mono">TP1–TP3</span> targets.
         </p>
 
-        <div class="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
-          <div class="kaizz-glass kaizz-glass-hover p-3.5 sm:p-4 rounded-2xl">
-            <div class="text-[11px] font-mono text-zinc-400 uppercase">Verified Win Rate</div>
-            <div class="font-mono text-xl sm:text-2xl font-bold text-gold-metallic mt-1">94.6%</div>
-            <div class="text-[11px] text-emerald-400 font-mono mt-0.5">+3.2% this week</div>
-          </div>
-          <div class="kaizz-glass kaizz-glass-hover p-3.5 sm:p-4 rounded-2xl">
-            <div class="text-[11px] font-mono text-zinc-400 uppercase">Avg Risk : Reward</div>
-            <div class="font-mono text-xl sm:text-2xl font-bold text-white mt-1">1 : 3.8</div>
-            <div class="text-[11px] text-amber-200 font-mono mt-0.5">Institutional R:R</div>
-          </div>
-          <div class="kaizz-glass kaizz-glass-hover p-3.5 sm:p-4 rounded-2xl">
-            <div class="text-[11px] font-mono text-zinc-400 uppercase">Scan Latency</div>
-            <div class="font-mono text-xl sm:text-2xl font-bold text-emerald-400 mt-1">0.42s</div>
-            <div class="text-[11px] text-zinc-400 font-mono mt-0.5">Neural Core v4</div>
-          </div>
+        <div class="hero__cta">
+          <a href="#terminal" class="btn btn--gold btn--lg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Open Live Terminal
+          </a>
+          <a href="#risk" class="btn btn--ghost btn--lg">Position Calculator</a>
         </div>
+
+        <dl class="hero__stats">
+          <div class="stat">
+            <dt>Model Hit Rate</dt>
+            <dd class="stat__value" data-count="94.6" data-decimals="1" data-suffix="%">0%</dd>
+            <dd class="stat__sub txt-up">Simulated · this week</dd>
+          </div>
+          <div class="stat">
+            <dt>Avg Risk : Reward</dt>
+            <dd class="stat__value stat__value--light" data-count="3.8" data-decimals="1" data-prefix="1 : ">1 : 0</dd>
+            <dd class="stat__sub txt-gold">Target R:R</dd>
+          </div>
+          <div class="stat">
+            <dt>Scan Latency</dt>
+            <dd class="stat__value stat__value--up" data-count="0.42" data-decimals="2" data-suffix="s">0s</dd>
+            <dd class="stat__sub">Neural Core v4</dd>
+          </div>
+        </dl>
       </div>
 
-      <!-- Right Interactive 3D Golden Core Viewport -->
-      <div class="lg:col-span-5">
-        <div class="kaizz-glass rounded-3xl p-4 relative overflow-hidden border border-amber-400/40">
-          <div class="flex items-center justify-between text-xs font-mono text-amber-100/80 mb-2 px-1">
-            <span class="flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-              3D QUANTUM CORE • DRAG TO ROTATE
-            </span>
-            <span id="hero-3d-coords" class="text-[11px] text-zinc-400">X: 0.00 Y: 0.00</span>
+      <div class="hero__visual" data-reveal data-reveal-delay="120">
+        <div class="core-panel">
+          <div class="core-panel__bar">
+            <span class="core-panel__label"><span class="dot dot--gold"></span> 3D QUANTUM CORE · DRAG TO ROTATE</span>
+            <span class="core-panel__coords" id="core-coords">X: 0.00 Y: 0.00</span>
           </div>
-          <div class="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden bg-gradient-to-b from-black/60 via-[#070709] to-black/80 border border-amber-400/20">
-            <canvas id="hero-3d-canvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
-            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none text-[11px] font-mono">
-              <span class="px-2.5 py-1 rounded-lg bg-[#070709]/85 border border-amber-400/30 text-amber-100">XAUUSD BIAS: <strong id="hud-bias" class="text-emerald-400">BULLISH</strong></span>
-              <span class="px-2.5 py-1 rounded-lg bg-[#070709]/85 border border-amber-400/30 text-zinc-300">MA-13 DELTA: <strong id="hud-ma-delta" class="text-amber-300">+4.82</strong></span>
-            </div>
+          <div class="core-panel__stage">
+            <canvas id="core-canvas"></canvas>
+            <span class="core-panel__halo"></span>
+            <span class="core-panel__scan"></span>
+            <span class="core-panel__badge">SIGNAL LOCKED · XAUUSD</span>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. DUAL-MODE AI MARKET SCANNER & INTERACTIVE CANDLESTICK TERMINAL -->
-    <section id="scanner-terminal" class="space-y-6">
-      <div class="kaizz-glass rounded-3xl p-4 sm:p-6">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-amber-400/20">
-          <!-- Mode Tabs -->
-          <div class="flex flex-wrap items-center gap-2 bg-[#070709]/90 p-1.5 rounded-2xl border border-amber-400/25 w-fit">
-            <button type="button" id="tab-live-chart" onclick="switchScannerTab('live')" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition flex items-center gap-2 bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 text-black">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
-              <span>MODE 1: LIVE NEURAL CHART</span>
-            </button>
-            <button type="button" id="tab-vision-scan" onclick="switchScannerTab('vision')" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition flex items-center gap-2 text-zinc-300 hover:text-amber-200">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              <span>MODE 2: VISION SCREENSHOT SCAN</span>
-            </button>
-          </div>
-
-          <!-- Asset Pair Selector & Timeframes -->
-          <div id="live-chart-controls" class="flex flex-wrap items-center gap-2.5">
-            <div class="flex flex-wrap items-center gap-1.5 bg-[#070709]/90 p-1.5 rounded-xl border border-amber-400/20" id="pair-selector">
-              <button type="button" data-pair="XAUUSD" class="pair-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-amber-400/20 text-amber-200 border border-amber-400/50">XAUUSD</button>
-              <button type="button" data-pair="XAUUSDc" class="pair-btn px-3 py-1.5 rounded-lg text-xs font-mono font-semibold text-zinc-400 hover:text-white">XAUUSDc</button>
-              <button type="button" data-pair="XAGUSD" class="pair-btn px-3 py-1.5 rounded-lg text-xs font-mono font-semibold text-zinc-400 hover:text-white">XAGUSD</button>
-              <button type="button" data-pair="BTCUSDT" class="pair-btn px-3 py-1.5 rounded-lg text-xs font-mono font-semibold text-zinc-400 hover:text-white">BTCUSDT</button>
-              <button type="button" data-pair="GBPUSD" class="pair-btn px-3 py-1.5 rounded-lg text-xs font-mono font-semibold text-zinc-400 hover:text-white">GBPUSD</button>
-            </div>
-
-            <div class="flex items-center gap-1 bg-[#070709]/90 p-1.5 rounded-xl border border-amber-400/20" id="tf-selector">
-              <button type="button" data-tf="M5" class="tf-btn px-2.5 py-1.5 rounded-lg text-xs font-mono font-semibold text-zinc-400 hover:text-white">M5</button>
-              <button type="button" data-tf="M15" class="tf-btn px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-amber-400/20 text-amber-200 border border-amber-400/50">M15</button>
-              <button type="button" data-tf="M30" class="tf-btn px-2.5 py-1.5 rounded-lg text-xs font-mono font-semibold text-zinc-400 hover:text-white">M30</button>
-              <button type="button" data-tf="H1" class="tf-btn px-2.5 py-1.5 rounded-lg text-xs font-mono font-semibold text-zinc-400 hover:text-white">H1</button>
-            </div>
-
-            <button type="button" id="toggle-ma13" onclick="toggleMA13()" class="px-3 py-2 rounded-xl text-xs font-mono font-bold bg-amber-400/15 text-amber-200 border border-amber-400/45 flex items-center gap-1.5 hover:bg-amber-400/25 transition">
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-              <span>MA 13: ON</span>
-            </button>
+          <div class="core-panel__hud">
+            <span class="hud-chip">XAUUSD BIAS: <strong class="txt-up" id="hud-bias">BULLISH</strong></span>
+            <span class="hud-chip">MA-13 DELTA: <strong class="txt-gold" id="hud-delta">+4.82</strong></span>
           </div>
         </div>
-
-        <!-- MAIN WORKSPACE GRID -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-5">
-
-          <!-- LEFT 8 COLS: CHART OR VISION SCANNER -->
-          <div class="lg:col-span-8 flex flex-col justify-between space-y-4">
-
-            <!-- MODE 1 VIEW: INTERACTIVE CANDLESTICK CANVAS -->
-            <div id="mode-live-container" class="space-y-4">
-              <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-[#070709]/90 border border-amber-400/20">
-                <div class="flex items-center gap-2">
-                  <span id="chart-pair-title" class="font-display text-lg sm:text-xl font-bold text-white">XAUUSD</span>
-                  <span id="chart-tf-badge" class="px-2 py-0.5 rounded bg-amber-400/15 text-amber-300 font-mono text-xs font-bold">M15</span>
-                  <span class="hidden sm:inline text-[11px] font-mono text-zinc-400 ml-1">• INSTITUTIONAL FEED</span>
-                </div>
-
-                <div class="flex items-center gap-5 font-mono">
-                  <div>
-                    <div class="text-[10px] text-zinc-400 uppercase">LIVE PRICE</div>
-                    <div id="chart-live-price" class="text-lg sm:text-2xl font-bold text-gold-metallic">2748.65</div>
-                  </div>
-                  <div class="hidden sm:block">
-                    <div class="text-[10px] text-zinc-400 uppercase">MA-13 VALUE</div>
-                    <div id="chart-ma13-val" class="text-sm font-semibold text-amber-200">2744.10</div>
-                  </div>
-                  <div class="hidden sm:block">
-                    <div class="text-[10px] text-zinc-400 uppercase">24H CHANGE</div>
-                    <div id="chart-volatility" class="text-sm font-semibold text-emerald-400">+1.48%</div>
-                  </div>
-                </div>
-              </div>
-
-              <div id="chart-wrapper" class="relative w-full h-[360px] sm:h-[420px] rounded-2xl overflow-hidden bg-[#090A0E] border border-amber-400/30">
-                <canvas id="candlestick-canvas" class="w-full h-full block"></canvas>
-
-                <div id="live-scan-overlay" class="hidden absolute inset-0 bg-[#070709]/65 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center p-6">
-                  <div class="laser-beam"></div>
-                  <div class="kaizz-glass px-6 py-4 rounded-2xl border border-amber-400/60 text-center max-w-sm space-y-2.5">
-                    <div class="text-xs font-mono uppercase tracking-widest text-amber-300 animate-pulse">KAIZZ NEURAL DIAGNOSTICS</div>
-                    <div id="scan-step-label" class="font-display text-base sm:text-lg font-bold text-white">Detecting Liquidity Sweep...</div>
-                    <div class="w-full bg-black/80 h-2 rounded-full overflow-hidden border border-amber-400/30">
-                      <div id="scan-progress-bar" class="h-full bg-gradient-to-r from-amber-600 via-amber-400 to-amber-200 transition-all duration-200" style="width: 15%"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="absolute top-3 left-3 flex flex-wrap items-center gap-2 pointer-events-none text-[10px] font-mono">
-                  <span class="px-2 py-1 rounded bg-black/75 border border-amber-400/30 text-amber-200 flex items-center gap-1.5">
-                    <span class="w-2.5 h-0.5 bg-amber-400 inline-block"></span> MA 13 EQUILIBRIUM
-                  </span>
-                  <span id="zone-legend-badge" class="hidden px-2 py-1 rounded bg-black/75 border border-emerald-500/40 text-emerald-300">
-                    AI ZONES ACTIVE (ENTRY / SL / TP1-3)
-                  </span>
-                </div>
-              </div>
-
-              <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
-                <div class="text-xs text-zinc-400 font-mono flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                  <span>Computes Institutional Order Block &amp; MA-13 confluence</span>
-                </div>
-                <button type="button" id="btn-initiate-live-scan" onclick="runLiveNeuralScan()" class="btn-gold-luxury w-full sm:w-auto px-7 py-3.5 rounded-2xl text-sm uppercase flex items-center justify-center gap-2.5">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
-                  <span>INITIATE AI SCAN</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- MODE 2 VIEW: VISION AI SCREENSHOT SCANNER -->
-            <div id="mode-vision-container" class="hidden space-y-4">
-              <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-[#070709]/90 border border-amber-400/20">
-                <div>
-                  <h3 class="font-display text-base sm:text-lg font-bold text-amber-200">KAIZZ VISION AI — CHART SCREENSHOT DECODER</h3>
-                  <p class="text-xs text-zinc-400">Upload an MT5 / TradingView screenshot or load a sample chart to map levels.</p>
-                </div>
-                <button type="button" onclick="loadSampleMT5Chart()" class="px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-amber-400/15 text-amber-200 border border-amber-400/45 hover:bg-amber-400/25 transition">
-                  Load Sample MT5 Chart
-                </button>
-              </div>
-
-              <div id="vision-dropzone" class="relative w-full h-[360px] sm:h-[420px] rounded-2xl border-2 border-dashed border-amber-400/40 bg-[#090A0E] hover:border-amber-400 transition flex flex-col items-center justify-center overflow-hidden cursor-pointer">
-                <input type="file" id="vision-file-input" accept="image/*" class="hidden" onchange="handleVisionUpload(event)" />
-
-                <div id="vision-placeholder" onclick="document.getElementById('vision-file-input').click()" class="text-center p-6 space-y-3 max-w-md">
-                  <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-400/10 border border-amber-400/40 flex items-center justify-center text-amber-300">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                  </div>
-                  <div class="font-display text-lg font-bold text-white">Drop MT5 Chart Screenshot Here</div>
-                  <p class="text-xs text-zinc-400">Supports PNG, JPG, WEBP. Or click <span class="text-amber-300 underline">"Load Sample MT5 Chart"</span> above.</p>
-                </div>
-
-                <canvas id="vision-canvas" class="hidden w-full h-full object-contain"></canvas>
-
-                <div id="vision-scan-overlay" class="hidden absolute inset-0 bg-[#070709]/60 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center p-6">
-                  <div class="laser-beam"></div>
-                  <div class="kaizz-glass px-6 py-4 rounded-2xl border border-amber-400/60 text-center max-w-sm space-y-2">
-                    <div class="text-xs font-mono uppercase tracking-widest text-amber-300 animate-pulse">OPTICAL CANDLESTICK RECOGNITION</div>
-                    <div id="vision-step-label" class="font-display text-base font-bold text-white">Mapping Support &amp; Resistance...</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
-                <button type="button" onclick="document.getElementById('vision-file-input').click()" class="w-full sm:w-auto px-4 py-3 rounded-xl text-xs font-mono font-semibold text-zinc-300 bg-[#070709] border border-amber-400/30 hover:border-amber-400 transition">
-                  Upload Different Image
-                </button>
-                <button type="button" onclick="runVisionNeuralScan()" class="btn-gold-luxury w-full sm:w-auto px-7 py-3.5 rounded-2xl text-sm uppercase flex items-center justify-center gap-2.5">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                  <span>DECODE SCREENSHOT AI</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- RIGHT 4 COLS: KAIZZ VIP SIGNAL OUTPUT CARD -->
-          <div class="lg:col-span-4 flex flex-col">
-            <div id="vip-signal-card" class="kaizz-glass rounded-3xl p-5 sm:p-6 border border-amber-400/45 flex-1 flex flex-col justify-between relative overflow-hidden">
-              <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-amber-400/10 blur-2xl pointer-events-none"></div>
-
-              <div class="space-y-4">
-                <div class="flex items-center justify-between border-b border-amber-400/20 pb-3.5">
-                  <div>
-                    <span class="text-[10px] font-mono uppercase tracking-widest text-amber-300">KAIZZ VIP EXECUTION</span>
-                    <h3 id="sig-pair-header" class="font-display text-xl font-extrabold text-white mt-0.5">XAUUSD • M15</h3>
-                  </div>
-                  <div class="text-right">
-                    <span class="text-[10px] font-mono text-zinc-400 block">AI CONFIDENCE</span>
-                    <span id="sig-confidence" class="font-mono text-lg font-bold text-gold-metallic">96.8%</span>
-                  </div>
-                </div>
-
-                <!-- Action Badge -->
-                <div id="sig-action-box" class="p-4 rounded-2xl bg-emerald-500/12 border border-emerald-500/40 flex items-center justify-between">
-                  <div>
-                    <span class="text-[10px] font-mono uppercase tracking-wider text-emerald-300/80 block">SIGNAL DIRECTION</span>
-                    <span id="sig-action-text" class="font-display text-2xl font-black tracking-wider text-emerald-400">BUY NOW</span>
-                  </div>
-                  <div id="sig-action-icon" class="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                  </div>
-                </div>
-
-                <!-- Exact Price Levels Table -->
-                <div class="space-y-2.5 font-mono text-sm">
-                  <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-black/50 border border-amber-400/25">
-                    <span class="text-xs text-zinc-400">ENTRY ZONE</span>
-                    <span id="sig-entry" class="font-bold text-amber-200">2748.50</span>
-                  </div>
-                  <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30">
-                    <span class="text-xs text-rose-300/90">STOP LOSS (SL)</span>
-                    <span id="sig-sl" class="font-bold text-rose-400">2743.50</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-2 pt-1">
-                    <div class="px-2.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center">
-                      <div class="text-[10px] text-emerald-300/80">TP 1</div>
-                      <div id="sig-tp1" class="text-xs font-bold text-emerald-400 mt-0.5">2752.50</div>
-                    </div>
-                    <div class="px-2.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center">
-                      <div class="text-[10px] text-emerald-300/80">TP 2</div>
-                      <div id="sig-tp2" class="text-xs font-bold text-emerald-400 mt-0.5">2757.00</div>
-                    </div>
-                    <div class="px-2.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center">
-                      <div class="text-[10px] text-emerald-300/80">TP 3</div>
-                      <div id="sig-tp3" class="text-xs font-bold text-emerald-400 mt-0.5">2763.50</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Rationale Note -->
-                <div class="p-3 rounded-xl bg-black/40 border border-white/10 text-xs text-zinc-300 leading-relaxed">
-                  <span class="font-mono text-[10px] uppercase text-amber-300 block mb-1">NEURAL CONFLUENCE</span>
-                  <span id="sig-rationale">Price retested dynamic MA-13 support above an M15 bullish order block with clean session momentum.</span>
-                </div>
-              </div>
-
-              <div class="pt-4 mt-4 border-t border-amber-400/20 flex items-center justify-between gap-2">
-                <span id="sig-timestamp" class="text-[11px] font-mono text-zinc-400">Updated: Just now</span>
-                <button type="button" onclick="copyCurrentSignal()" class="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-amber-400/15 text-amber-200 border border-amber-400/45 hover:bg-amber-400/25 transition">
-                  Copy Signal
-                </button>
-              </div>
-            </div>
-          </div>
-
+        <div class="hero__float hero__float--one">
+          <span class="hero__float-label">AI CONFIDENCE</span>
+          <span class="hero__float-value gold-text">96.8%</span>
+        </div>
+        <div class="hero__float hero__float--two">
+          <span class="dot dot--live"></span> 4 markets · simulated feed
         </div>
       </div>
     </section>
 
+    <!-- ░░ MARQUEE ░░ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>LIQUIDITY SWEEPS</span><i>✦</i><span>ORDER BLOCKS</span><i>✦</i><span>MA-13 EQUILIBRIUM</span><i>✦</i><span>SL / TP ENGINE</span><i>✦</i><span>SESSION KILLZONES</span><i>✦</i><span>RISK DISCIPLINE</span><i>✦</i>
+        <span>LIQUIDITY SWEEPS</span><i>✦</i><span>ORDER BLOCKS</span><i>✦</i><span>MA-13 EQUILIBRIUM</span><i>✦</i><span>SL / TP ENGINE</span><i>✦</i><span>SESSION KILLZONES</span><i>✦</i><span>RISK DISCIPLINE</span><i>✦</i>
+      </div>
+    </div>
+
+    <!-- ░░ TERMINAL ░░ -->
+    <section class="section container" id="terminal">
+      <header class="section__head" data-reveal>
+        <div>
+          <div class="eyebrow">AI SCAN TERMINAL</div>
+          <h2 class="section__title">The <span class="gold-text">Execution Desk</span></h2>
+        </div>
+        <p class="section__sub">
+          Two engines, one verdict. Stream a live-style chart or decode a broker screenshot, then let the
+          neural core stamp direction, entry, stop and targets.
+        </p>
+      </header>
+
+      <div class="terminal" data-reveal>
+        <div class="terminal__toolbar">
+          <div class="tabs" role="tablist" aria-label="Scanner mode">
+            <button type="button" class="tab is-active" id="tab-live" role="tab" aria-selected="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 2 4-6"/></svg>
+              Live Neural Chart
+            </button>
+            <button type="button" class="tab" id="tab-vision" role="tab" aria-selected="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"/><circle cx="12" cy="12.5" r="3"/></svg>
+              Vision Screenshot Scan
+            </button>
+          </div>
+
+          <div class="toolbar__right" id="live-controls">
+            <div class="segmented" id="pair-selector" aria-label="Asset pair">
+              <button type="button" class="seg is-active" data-pair="XAUUSD">XAUUSD</button>
+              <button type="button" class="seg" data-pair="XAGUSD">XAGUSD</button>
+              <button type="button" class="seg" data-pair="BTCUSDT">BTCUSDT</button>
+              <button type="button" class="seg" data-pair="GBPUSD">GBPUSD</button>
+            </div>
+            <div class="segmented segmented--small" id="tf-selector" aria-label="Timeframe">
+              <button type="button" class="seg" data-tf="M5">M5</button>
+              <button type="button" class="seg is-active" data-tf="M15">M15</button>
+              <button type="button" class="seg" data-tf="M30">M30</button>
+              <button type="button" class="seg" data-tf="H1">H1</button>
+            </div>
+            <button type="button" class="ma-toggle is-on" id="ma-toggle" aria-pressed="true">
+              <span class="dot"></span> MA 13 <b>ON</b>
+            </button>
+          </div>
+        </div>
+
+        <div class="terminal__grid">
+          <div class="terminal__chartcol">
+
+            <!-- LIVE MODE -->
+            <div id="mode-live">
+              <div class="chart-head">
+                <div class="chart-head__id">
+                  <span class="chart-head__pair" id="chart-pair">XAUUSD</span>
+                  <span class="chart-head__tf" id="chart-tf">M15</span>
+                  <span class="chart-head__feed">SPOT GOLD · SIMULATED FEED</span>
+                </div>
+                <div class="chart-head__quotes">
+                  <div>
+                    <span class="micro">LIVE BID</span>
+                    <span class="chart-head__price" id="chart-price">2748.50</span>
+                  </div>
+                  <div>
+                    <span class="micro">MA-13</span>
+                    <span class="chart-head__ma" id="chart-ma">2744.10</span>
+                  </div>
+                  <div>
+                    <span class="micro">24H</span>
+                    <span class="chart-head__chg txt-up" id="chart-change">+1.48%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chart-stage" id="chart-stage">
+                <canvas id="candle-canvas"></canvas>
+
+                <div class="chart-stage__legend">
+                  <span class="legend-pill"><span class="legend-line legend-line--ma"></span> MA 13 EQUILIBRIUM</span>
+                  <span class="legend-pill legend-pill--zones is-hidden" id="zone-badge">AI ZONES · ENTRY / SL / TP1–3</span>
+                </div>
+
+                <div class="scan-overlay is-hidden" id="scan-overlay">
+                  <span class="laser"></span>
+                  <div class="scan-box">
+                    <span class="scan-box__eyebrow">KAIZZ NEURAL DIAGNOSTICS</span>
+                    <span class="scan-box__step" id="scan-step">Detecting liquidity sweep…</span>
+                    <div class="scan-box__bar"><span id="scan-bar"></span></div>
+                    <span class="scan-box__pct" id="scan-pct">0%</span>
+                  </div>
+                </div>
+
+                <div class="chart-stage__watermark">KAIZZ · MA-13</div>
+              </div>
+
+              <div class="chart-foot">
+                <span class="chart-foot__note"><span class="dot dot--gold"></span> Order-block + MA-13 confluence · computed in-browser</span>
+                <button type="button" class="btn btn--gold btn--scan" id="scan-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9h6v6H9z"/></svg>
+                  <span>Initiate AI Scan</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- VISION MODE -->
+            <div id="mode-vision" class="is-hidden">
+              <div class="chart-head">
+                <div class="chart-head__id">
+                  <span class="chart-head__pair">VISION DECODER</span>
+                  <span class="chart-head__tf">OCR</span>
+                  <span class="chart-head__feed">OPTICAL CANDLE RECOGNITION</span>
+                </div>
+                <button type="button" class="btn btn--ghost btn--sm" id="vision-sample">Load sample chart</button>
+              </div>
+
+              <div class="vision-stage" id="vision-stage">
+                <input type="file" id="vision-input" accept="image/*" class="visually-hidden" />
+                <button type="button" class="vision-drop" id="vision-drop">
+                  <span class="vision-drop__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m4 17 5-5 4 4 3-3 4 4"/><circle cx="9" cy="8.5" r="1.4"/></svg>
+                  </span>
+                  <span class="vision-drop__title">Drop an MT5 / TradingView screenshot</span>
+                  <span class="vision-drop__sub">PNG, JPG or WEBP · analysed locally, never uploaded</span>
+                </button>
+                <canvas id="vision-canvas" class="is-hidden"></canvas>
+
+                <div class="scan-overlay is-hidden" id="vision-overlay">
+                  <span class="laser"></span>
+                  <div class="scan-box">
+                    <span class="scan-box__eyebrow">OPTICAL CANDLESTICK RECOGNITION</span>
+                    <span class="scan-box__step" id="vision-step">Mapping support &amp; resistance…</span>
+                    <div class="scan-box__bar"><span id="vision-bar"></span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chart-foot">
+                <span class="chart-foot__note"><span class="dot dot--gold"></span> Demo decoder · levels are simulated</span>
+                <button type="button" class="btn btn--gold btn--scan" id="vision-scan-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span>Decode Screenshot</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SIGNAL CARD -->
+          <aside class="signal" id="signal-card" aria-live="polite">
+            <span class="signal__glow"></span>
+            <div class="signal__head">
+              <div>
+                <span class="micro gold-text">KAIZZ VIP EXECUTION</span>
+                <h3 class="signal__pair" id="sig-pair">XAUUSD · M15</h3>
+              </div>
+              <div class="signal__conf">
+                <span class="micro">AI CONFIDENCE</span>
+                <span class="signal__conf-value" id="sig-conf">96.8%</span>
+              </div>
+            </div>
+
+            <div class="signal__action is-up" id="sig-action">
+              <div>
+                <span class="micro">SIGNAL DIRECTION</span>
+                <strong id="sig-dir">BUY NOW</strong>
+              </div>
+              <span class="signal__arrow" id="sig-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M8 6h10v10"/></svg>
+              </span>
+            </div>
+
+            <div class="levels">
+              <div class="level level--entry">
+                <span class="level__label">ENTRY PRICE</span>
+                <span class="level__value" id="sig-entry">2748.50</span>
+              </div>
+              <div class="level level--sl">
+                <span class="level__label">STOP LOSS</span>
+                <span class="level__value" id="sig-sl">2743.50</span>
+              </div>
+              <div class="level-row">
+                <div class="level level--tp"><span class="level__label">TP 1</span><span class="level__value" id="sig-tp1">2752.50</span></div>
+                <div class="level level--tp"><span class="level__label">TP 2</span><span class="level__value" id="sig-tp2">2757.00</span></div>
+                <div class="level level--tp"><span class="level__label">TP 3</span><span class="level__value" id="sig-tp3">2763.50</span></div>
+              </div>
+            </div>
+
+            <div class="signal__note">
+              <span class="micro">NEURAL CONFLUENCE</span>
+              <p id="sig-note">Price retested the dynamic MA-13 above an M15 bullish order block with clean session momentum.</p>
+            </div>
+
+            <div class="signal__foot">
+              <span class="micro" id="sig-time">Updated just now</span>
+              <button type="button" class="btn btn--ghost btn--sm" id="copy-signal">Copy signal</button>
+            </div>
+            <p class="micro signal__disclaimer">Simulated analytics · not financial advice</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ VAULT ░░ -->
+    <section class="section container" id="vault">
+      <header class="section__head" data-reveal>
+        <div>
+          <div class="eyebrow">SIMULATED TRACK RECORD <span class="chip chip--emerald">+1,480 PIPS THIS MONTH</span></div>
+          <h2 class="section__title">The Signal <span class="gold-text">Vault</span></h2>
+        </div>
+        <p class="section__sub">A running ledger of recent model output, from entry to final take-profit. Simulated for demonstration.</p>
+      </header>
+
+      <div class="vault" id="vault-grid" data-reveal></div>
+
+      <div class="vault__stats" data-reveal>
+        <div class="vault__stat"><span class="micro">Closed this month</span><strong>128</strong></div>
+        <div class="vault__stat"><span class="micro">Hit TP1 or better</span><strong>94.6%</strong></div>
+        <div class="vault__stat"><span class="micro">Avg RR realised</span><strong>1 : 3.8</strong></div>
+        <div class="vault__stat"><span class="micro">Max drawdown (model)</span><strong class="txt-down">4.1%</strong></div>
+      </div>
+    </section>
+
+    <!-- ░░ RISK ░░ -->
+    <section class="section container" id="risk">
+      <header class="section__head" data-reveal>
+        <div>
+          <div class="eyebrow">CAPITAL PROTECTION</div>
+          <h2 class="section__title">Sovereign <span class="gold-text">Lot &amp; Risk Engine</span></h2>
+        </div>
+        <p class="section__sub">Size every position from the risk first. Adjust the inputs and the engine recomputes your lot size instantly.</p>
+      </header>
+
+      <div class="risk" data-reveal>
+        <form class="risk__form" id="risk-form" autocomplete="off">
+          <div class="field">
+            <label for="risk-balance">Account balance (USD)</label>
+            <div class="field__control"><span class="field__prefix">$</span><input id="risk-balance" type="number" min="100" step="100" value="25000" /></div>
+          </div>
+
+          <div class="field">
+            <label for="risk-percent">Risk per trade <span class="field__hint" id="risk-percent-hint">1.5%</span></label>
+            <input id="risk-percent" class="range" type="range" min="0.25" max="5" step="0.25" value="1.5" />
+          </div>
+
+          <div class="field">
+            <label for="risk-sl">Stop loss (pips / points)</label>
+            <div class="field__control"><input id="risk-sl" type="number" min="1" step="1" value="75" /></div>
+          </div>
+
+          <div class="field">
+            <label for="risk-instrument">Instrument</label>
+            <div class="field__control field__control--select">
+              <select id="risk-instrument">
+                <option value="XAUUSD" selected>XAUUSD · Gold</option>
+                <option value="XAGUSD">XAGUSD · Silver</option>
+                <option value="BTCUSDT">BTCUSDT · Bitcoin</option>
+                <option value="GBPUSD">GBPUSD · Sterling</option>
+              </select>
+              <svg class="field__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn--gold btn--block" id="risk-apply">Apply to current signal</button>
+        </form>
+
+        <div class="risk__result">
+          <span class="risk__result-label micro">RECOMMENDED LOT SIZE</span>
+          <div class="risk__lots"><span id="risk-lots">0.50</span><em>LOTS</em></div>
+
+          <div class="risk__metrics">
+            <div><span class="micro">Max risk amount</span><strong class="txt-down" id="risk-amount">$375.00</strong></div>
+            <div><span class="micro">Value per pip</span><strong id="risk-pip">$10.00</strong></div>
+            <div><span class="micro">Contracts</span><strong id="risk-contracts">0.50</strong></div>
+          </div>
+
+          <div class="risk__gauge">
+            <div class="risk__gauge-head"><span class="micro">Risk allocation</span><span class="micro" id="risk-gauge-label">1.5% of equity</span></div>
+            <div class="risk__gauge-track"><span id="risk-gauge-fill"></span></div>
+            <div class="risk__gauge-foot"><span>0%</span><span class="chip chip--emerald" id="risk-verdict">Within mandate</span><span>5%</span></div>
+          </div>
+
+          <p class="risk__note">Sizing is an educational approximation. Confirm contract specifications with your broker before trading.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ DOCTRINE ░░ -->
+    <section class="section container" id="doctrine">
+      <header class="section__head" data-reveal>
+        <div>
+          <div class="eyebrow">THE KAIZZ DOCTRINE</div>
+          <h2 class="section__title">Built like an <span class="gold-text">institution</span></h2>
+        </div>
+      </header>
+      <div class="cards">
+        <article class="card" data-reveal>
+          <span class="card__index">01</span>
+          <h3>Liquidity mapping</h3>
+          <p>Session highs, lows and imbalance zones are mapped before a single candle is trusted. Sweeps come first, entries second.</p>
+        </article>
+        <article class="card" data-reveal data-reveal-delay="80">
+          <span class="card__index">02</span>
+          <h3>MA-13 equilibrium</h3>
+          <p>The 13-period mean defines the institutional axis. Price above it is bid, below it is offered. Everything is aligned to that line.</p>
+        </article>
+        <article class="card" data-reveal data-reveal-delay="160">
+          <span class="card__index">03</span>
+          <h3>Risk before reward</h3>
+          <p>Every signal ships with a hard stop and a sized position. No stop means no trade — the engine refuses to output one.</p>
+        </article>
+      </div>
+    </section>
   </main>
 
-  <!-- Deferred Application Script -->
+  <!-- ░░ FOOTER ░░ -->
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <div class="brand">
+          <span class="brand__crest brand__crest--sm">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="32,4 55,15 60,37 47,59 17,59 4,37 9,15" stroke="#D4AF37" stroke-width="1.7" fill="rgba(212,175,55,.06)" />
+              <path d="M24 20v24M24 32.5l14-12M27 28l12 16" stroke="#F3E5AB" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <span class="brand__text"><span class="brand__name">KAIZZ</span><span class="brand__tag">Bane Luxury · Neural Execution</span></span>
+        </div>
+        <p class="footer__tagline">Precision gold &amp; FX intelligence, wrapped in obsidian and gold.</p>
+      </div>
+
+      <nav class="footer__links" aria-label="Footer">
+        <a href="#terminal">Terminal</a>
+        <a href="#vault">Signal Vault</a>
+        <a href="#risk">Risk Engine</a>
+        <a href="#doctrine">Doctrine</a>
+      </nav>
+    </div>
+
+    <div class="container footer__legal">
+      <p><strong>Important:</strong> KAIZZ is a design demonstration. Every price, scan, signal, win rate and performance figure on this page is simulated in your browser. Nothing here is financial advice, a recommendation, or a promise of profit. No broker, exchange or MT5 connection is made and no orders are placed. Leveraged gold, FX and crypto trading carries a high risk of loss.</p>
+      <p class="footer__copy">© <span id="year">2026</span> KAIZZ · Crafted for demo purposes · All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="dot dot--gold"></span>
+    <span id="toast-msg">Signal copied to clipboard</span>
+  </div>
+
   <script src="script.js" defer></script>
 </body>
 </html>
