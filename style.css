@@ -1660,3 +1660,84 @@ h1, h2, h3, p, dl, dd, dt { margin: 0; }
   .chart-head__feed { display: none; }
   .market-panel__rows b { max-width: 58%; }
 }
+
+/* ---------- EASY SCAN LEVELS ---------- */
+.scan-levels {
+  margin-top: 14px;
+  padding: 14px 14px 12px;
+  border: 1px solid rgba(212,175,55,.22);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(212,175,55,.06), rgba(0,0,0,.35));
+}
+.scan-levels__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.scan-levels__head .micro {
+  font-size: 8px;
+  letter-spacing: .16em;
+  color: var(--gold);
+}
+.scan-levels__dir {
+  font: 700 10px var(--font-mono);
+  letter-spacing: .12em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.scan-levels__dir.is-buy {
+  color: var(--up);
+  border-color: rgba(61,220,151,.45);
+  background: rgba(61,220,151,.08);
+}
+.scan-levels__dir.is-sell {
+  color: var(--down);
+  border-color: rgba(255,107,129,.45);
+  background: rgba(255,107,129,.08);
+}
+.scan-levels__dir.is-wait {
+  color: var(--gold-100);
+  border-color: rgba(212,175,55,.3);
+  background: rgba(212,175,55,.05);
+}
+.scan-levels__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(212,175,55,.12);
+  border: 1px solid rgba(212,175,55,.12);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.scan-levels__grid > div {
+  display: grid;
+  gap: 4px;
+  padding: 9px 10px;
+  background: #0b0b0e;
+}
+.scan-levels__grid span {
+  color: var(--muted);
+  font: 8.5px var(--font-mono);
+  letter-spacing: .12em;
+}
+.scan-levels__grid b {
+  color: var(--gold-100);
+  font: 600 12px var(--font-mono);
+  overflow-wrap: anywhere;
+}
+.scan-levels__grid b.is-up { color: var(--up); }
+.scan-levels__grid b.is-down { color: var(--down); }
+.scan-levels__note {
+  margin-top: 10px;
+  font: 9.5px/1.6 var(--font-mono);
+  color: #8f8a7e;
+}
+@media (max-width: 720px) {
+  .scan-levels__grid b { font-size: 11px; }
+  .scan-levels { padding: 12px 11px 10px; }
+}
