@@ -11,14 +11,16 @@ signals, no order execution.
 
 | Asset | Data | Provider |
 | --- | --- | --- |
-| BTCUSDT | 1m/5m/15m/30m/1h candles, 24h stats, live kline stream | Binance public market-data endpoints |
-| XAU/USD | Live spot price | Gold API — `https://api.gold-api.com/price/XAU` |
-| XAU/USD | Historical OHLC candles (optional) | Twelve Data — key entered in the page |
+| BTCUSDT | 5m/15m/30m/1h candles, 24h stats, live kline stream | Binance public market-data endpoints |
+| XAU/USD | 5m/15m/30m/1h candles, 24h stats, live kline stream | Binance PAXGUSDT — PAX Gold, a gold-backed token that tracks the XAU/USD spot price |
+| XAU/USD | Live spot price (native mode) | Gold API — `https://api.gold-api.com/price/XAU` |
+| XAU/USD | Historical OHLC candles (native mode, optional) | Twelve Data — key entered in the page |
 
-The Binance and Gold API feeds need no account or key. For gold **candles**, paste a
-free Twelve Data API key into the key bar on the XAUUSD chart and press
-“Load Gold Candles”. The key stays in the browser tab — it is not stored, logged or
-committed. Gold spot price works without a key.
+All default feeds need no account or key. Gold candles load automatically from
+Binance PAXGUSDT. For **native** XAU/USD candles, paste a free Twelve Data API key
+into the key bar on the XAUUSD chart and press “Load Gold Candles”; the key stays in
+the browser tab — it is not stored, logged or committed. If the key fails, the site
+falls back to the Binance gold candles automatically.
 
 ## Features
 
