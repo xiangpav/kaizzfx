@@ -17,6 +17,7 @@
     timeframe: "M15",
     candles: [],
     ma: true,
+    scan: null,
     lastPrice: null,
     change24h: null,
     lastUpdate: null,
@@ -124,6 +125,139 @@
     return closes.reduce((sum, n) => sum + n, 0) / period;
   }
 
+  function averageTrueRange(period = 14) {
+    const candles = state.candles;
+    if (candles.length < period + 1) return null;
+    let sum = 0;
+    for (let i = candles.length - period; i < candles.length; i++) {
+      const prev = candles[i - 1];
+      const tr = Math.max(
+        candles[i].h - candles[i].l,
+        Math.abs(candles[i].h - prev.c),
+        Math.abs(candles[i].l - prev.c)
+      );
+      sum += tr;
+    }
+    return sum / period;
+  }
+
+  // Easy Scan: rule-based levels from real candles only.
+  // Side = price vs MA-13 (WAIT inside a thin equilibrium band);
+  // stop = recent swing +/- ATR buffer; targets = 1R / 2R / 3R. Deterministic.
+  function computeScan() {
+    const candles = state.candles;
+    if (candles.length < 27) return null;
+    const closes = candles.map((c) => c.c);
+    const ma = closes.slice(-13).reduce((sum, n) => sum + n, 0) / 13;
+    const entry = candles[candles.length - 1].c;
+    const atr = averageTrueRange(14);
+    if (!Number.isFinite(atr) || atr <= 0) return null;
+    if (Math.abs(entry - ma) < atr * 0.15) return null;
+
+    const dir = entry > ma ? "BUY" : "SELL";
+    const risk = atr * 1.5;
+    const sl = dir === "BUY" ? entry - risk : entry + risk;
+    const sign = dir === "BUY" ? 1 : -1;
+    return {
+      dir, entry, sl, risk,
+      tp1: entry + sign * risk,
+      tp2: entry + sign * risk * 2,
+      tp3: entry + sign * risk * 3
+    };
+  }
+
+  function updateScanUI() {
+    const dirEl = $("#scan-direction");
+    if (!dirEl) return;
+    const badge = $("#zone-badge");
+    const scan = state.scan;
+    const setCell = (id, text, tone = "") => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = text;
+      el.classList.remove("is-up", "is-down");
+      if (tone) el.classList.add(tone);
+    };
+    const blank = () => {
+      ["entry", "sl", "tp1", "tp2", "tp3", "risk"].forEach((k) => setCell(`scan-${k}`, "—"));
+    };
+
+    dirEl.classList.remove("is-buy", "is-sell", "is-wait");
+    if (!scan) {
+      dirEl.textContent = "WAIT";
+      dirEl.classList.add("is-wait");
+      blank();
+      if (badge) badge.classList.add("is-hidden");
+      return;
+    }
+    const pair = state.pair;
+    const buy = scan.dir === "BUY";
+    dirEl.textContent = scan.dir;
+    dirEl.classList.add(buy ? "is-buy" : "is-sell");
+    setCell("scan-entry", fmt(scan.entry, pair));
+    setCell("scan-sl", fmt(scan.sl, pair), "is-down");
+    setCell("scan-tp1", fmt(scan.tp1, pair), "is-up");
+    setCell("scan-tp2", fmt(scan.tp2, pair), "is-up");
+    setCell("scan-tp3", fmt(scan.tp3, pair), "is-up");
+    setCell("scan-risk", fmt(scan.risk, pair));
+    if (badge) badge.classList.remove("is-hidden");
+  }
+
+  let scanAnimationToken = 0;
+
+  async function runScanAnimation() {
+    const overlay = $("#scan-overlay");
+    const stepEl = $("#scan-step");
+    const barEl = $("#scan-bar");
+    const pctEl = $("#scan-pct");
+    if (!overlay || !stepEl || !barEl || !pctEl) return;
+
+    const token = ++scanAnimationToken;
+    const stillOurs = () => token === scanAnimationToken;
+
+    if (reduceMotion) {
+      overlay.classList.add("is-hidden");
+      await loadCurrentMarket();
+      return;
+    }
+
+    const steps = [
+      "Reading real candles…",
+      "Measuring MA-13 trend…",
+      "Locating recent swing…",
+      "Projecting 1R / 2R / 3R levels…"
+    ];
+    overlay.classList.remove("is-hidden");
+    barEl.style.width = "0%";
+    pctEl.textContent = "0%";
+    stepEl.textContent = steps[0];
+
+    const loading = loadCurrentMarket();
+
+    for (let i = 0; i < steps.length; i++) {
+      if (!stillOurs()) return;
+      stepEl.textContent = steps[i];
+      const pct = Math.round(((i + 1) / steps.length) * 100);
+      barEl.style.width = pct + "%";
+      pctEl.textContent = pct + "%";
+      await new Promise((r) => window.setTimeout(r, 420));
+    }
+
+    await loading;
+    if (!stillOurs()) return;
+    await new Promise((r) => window.setTimeout(r, 260));
+
+    const scan = state.scan;
+    stepEl.textContent = scan
+      ? `Levels ready · ${scan.dir}`
+      : "No clear trend — stand aside";
+    barEl.style.width = "100%";
+    pctEl.textContent = "100%";
+    await new Promise((r) => window.setTimeout(r, 620));
+    if (!stillOurs()) return;
+    overlay.classList.add("is-hidden");
+  }
+
   function updateMarketUI() {
     const pair = state.pair;
     const price = state.lastPrice;
@@ -164,11 +298,15 @@
       const content = `<span class="ticker-item"><b>${gold}</b></span><span class="ticker-item"><b>${btc}</b></span>`;
       track.innerHTML = content + content;
     }
+    state.scan = computeScan();
+    updateScanUI();
     chart.invalidate();
   }
 
   function setNoCandles(message) {
     state.candles = [];
+    state.scan = null;
+    updateScanUI();
     chart.invalidate();
     $("#panel-note").textContent = message;
     $("#chart-ma").textContent = "—";
@@ -456,6 +594,11 @@
 
       let min = Math.min(...candles.map((c) => c.l));
       let max = Math.max(...candles.map((c) => c.h));
+      if (state.scan) {
+        const levels = [state.scan.sl, state.scan.tp1, state.scan.tp2, state.scan.tp3];
+        min = Math.min(min, ...levels);
+        max = Math.max(max, ...levels);
+      }
       const pad = (max - min) * 0.09 || Math.max(Math.abs(max) * 0.001, 0.01);
       min -= pad;
       max += pad;
@@ -516,6 +659,33 @@
           else ctx.lineTo(px, y(avg));
         }
         ctx.stroke();
+        ctx.restore();
+      }
+
+      if (state.scan) {
+        const scan = state.scan;
+        const levels = [
+          { p: scan.tp3, color: "rgba(61,220,151,.5)", label: "TP3" },
+          { p: scan.tp2, color: "rgba(61,220,151,.62)", label: "TP2" },
+          { p: scan.tp1, color: "rgba(61,220,151,.8)", label: "TP1" },
+          { p: scan.entry, color: "rgba(212,175,55,.9)", label: "ENTRY" },
+          { p: scan.sl, color: "rgba(255,107,129,.85)", label: "SL" }
+        ];
+        ctx.save();
+        ctx.font = "8px 'JetBrains Mono', monospace";
+        ctx.textAlign = "left";
+        levels.forEach((lv) => {
+          const ly = y(lv.p);
+          ctx.strokeStyle = lv.color;
+          ctx.setLineDash([3, 5]);
+          ctx.beginPath();
+          ctx.moveTo(left, ly);
+          ctx.lineTo(width - right, ly);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = lv.color;
+          ctx.fillText(lv.label, left + 4, ly - 5);
+        });
         ctx.restore();
       }
 
@@ -588,10 +758,10 @@
       await loadGoldCandles();
     });
 
-    $("#scan-btn").addEventListener("click", loadCurrentMarket);
+    $("#scan-btn").addEventListener("click", runScanAnimation);
     $("#nav-scan").addEventListener("click", () => {
       $("#terminal").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-      loadCurrentMarket();
+      runScanAnimation();
     });
   }
 
@@ -605,10 +775,6 @@
     if (visionButton) visionButton.remove();
     const oldVision = $("#mode-vision");
     if (oldVision) oldVision.remove();
-    const zoneBadge = $("#zone-badge");
-    if (zoneBadge) zoneBadge.remove();
-    const scanOverlay = $("#scan-overlay");
-    if (scanOverlay) scanOverlay.remove();
   }
 
   function boot() {
