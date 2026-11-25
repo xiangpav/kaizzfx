@@ -25,9 +25,12 @@
     btcTickerTimer: null,
     reconnectDelay: 2000,
     goldApiKey: "",
+    goldNative: false,
     goldQuoteTimer: null,
     resizeObserver: null
   };
+
+  const BINANCE_API = "https://data-api.binance.vision/api/v3";
 
   const TIMEFRAMES = {
     M5: { binance: "5m", twelve: "5min" },
@@ -145,7 +148,11 @@
     $("#hud-bias").className = "txt-gold";
     $("#hud-delta").textContent = ma == null || price == null ? "—" : (price - ma >= 0 ? "+" : "") + (price - ma).toFixed(2);
 
-    const source = pair === "BTCUSDT" ? "Binance public market data" : "Gold API spot · Twelve Data candles";
+    const source = pair === "BTCUSDT"
+      ? "Binance public market data"
+      : state.goldNative
+        ? "Gold API spot · Twelve Data candles"
+        : "Binance PAXGUSDT · gold-backed XAU proxy";
     $("#data-source").textContent = source;
     $("#panel-source").textContent = source;
     $("#panel-updated").textContent = state.lastUpdate ? new Date(state.lastUpdate).toLocaleTimeString() : "Waiting for data";
@@ -192,41 +199,49 @@
     }));
   }
 
+  async function fetchBinanceSeries(symbol, interval) {
+    const [rows, ticker] = await Promise.all([
+      fetchJson(`${BINANCE_API}/klines?symbol=${symbol}&interval=${interval}&limit=120`),
+      fetchJson(`${BINANCE_API}/ticker/24hr?symbol=${symbol}`)
+    ]);
+    state.candles = parseBinanceKlines(rows);
+    state.lastPrice = Number(ticker.lastPrice);
+    state.change24h = Number(ticker.priceChangePercent);
+    state.lastUpdate = Date.now();
+    updateMarketUI();
+  }
+
+  function startTickerPoll(symbol, pairName) {
+    if (state.btcTickerTimer) window.clearInterval(state.btcTickerTimer);
+    state.btcTickerTimer = window.setInterval(async () => {
+      if (state.pair !== pairName || document.hidden) return;
+      try {
+        const fresh = await fetchJson(`${BINANCE_API}/ticker/24hr?symbol=${symbol}`);
+        state.change24h = Number(fresh.priceChangePercent);
+        updateMarketUI();
+      } catch {}
+    }, 60000);
+  }
+
   async function loadBitcoin() {
     closeSocket();
     setStatus("DELAYED", "Loading Binance public market data…");
     const interval = TIMEFRAMES[state.timeframe].binance;
-    const base = "https://data-api.binance.vision/api/v3";
     try {
-      const [rows, ticker] = await Promise.all([
-        fetchJson(`${base}/klines?symbol=BTCUSDT&interval=${interval}&limit=120`),
-        fetchJson(`${base}/ticker/24hr?symbol=BTCUSDT`)
-      ]);
-      state.candles = parseBinanceKlines(rows);
-      state.lastPrice = Number(ticker.lastPrice);
-      state.change24h = Number(ticker.priceChangePercent);
-      state.lastUpdate = Date.now();
-      updateMarketUI();
-      setStatus("DELAYED", "Historical candles and 24-hour statistics loaded. Connecting to the live Binance candle stream…");
-      if (state.btcTickerTimer) window.clearInterval(state.btcTickerTimer);
-      state.btcTickerTimer = window.setInterval(async () => {
-        if (state.pair !== "BTCUSDT" || document.hidden) return;
-        try {
-          const fresh = await fetchJson(`${base}/ticker/24hr?symbol=BTCUSDT`);
-          state.change24h = Number(fresh.priceChangePercent);
-          updateMarketUI();
-        } catch {}
-      }, 60000);
-      connectBitcoinSocket(interval);
+      await fetchBinanceSeries("BTCUSDT", interval);
+      setStatus("DELAYED", "Connecting to the live Binance candle stream…");
+      startTickerPoll("BTCUSDT", "BTCUSDT");
+      connectBinanceSocket("btcusdt", interval, "BTCUSDT");
+      $("#panel-note").textContent = "Bitcoin candles, 24-hour statistics and the live candle stream come from Binance public market data. No simulated prices.";
     } catch (error) {
       setStatus("OFFLINE", `Binance data could not be loaded: ${error.message}. Check your connection and try again.`);
       setNoCandles("BTCUSDT market data is currently unavailable. No sample candles are shown.");
     }
   }
 
-  function connectBitcoinSocket(interval) {
+  function connectBinanceSocket(symbol, interval, pairName) {
     closeSocket();
-    const url = `wss://data-stream.binance.vision/ws/btcusdt@kline_${interval}`;
+    const url = `wss://data-stream.binance.vision/ws/${symbol}@kline_${interval}`;
     try {
       const socket = new WebSocket(url);
       state.ws = socket;
@@ -249,26 +264,26 @@
         state.lastPrice = candle.c;
         state.lastUpdate = Date.now();
         updateMarketUI();
-        setStatus("LIVE", "Connected to Binance WebSocket. BTCUSDT candles update from the exchange stream.");
+        setStatus("LIVE");
       });
       socket.addEventListener("close", () => {
         if (state.ws !== socket) return;
-        scheduleReconnect(interval);
+        scheduleReconnect(symbol, interval, pairName);
       });
       socket.addEventListener("error", () => {
         setStatus("DELAYED", "Binance WebSocket connection interrupted. Attempting to reconnect…");
       });
     } catch (error) {
-      scheduleReconnect(interval);
+      scheduleReconnect(symbol, interval, pairName);
     }
   }
 
-  function scheduleReconnect(interval) {
-    if (state.pair !== "BTCUSDT" || state.reconnectTimer) return;
+  function scheduleReconnect(symbol, interval, pairName) {
+    if (state.pair !== pairName || state.reconnectTimer) return;
     setStatus("DELAYED", "Live stream disconnected. Reconnecting…");
     state.reconnectTimer = window.setTimeout(() => {
       state.reconnectTimer = null;
-      connectBitcoinSocket(interval);
+      connectBinanceSocket(symbol, interval, pairName);
     }, state.reconnectDelay);
     state.reconnectDelay = Math.min(state.reconnectDelay * 2, 30000);
   }
@@ -308,7 +323,7 @@
     const key = state.goldApiKey.trim();
     if (!key) {
       setNoCandles("Gold spot price is live. To show genuine historical XAUUSD OHLC candles, enter a Twelve Data API key and press “Load Gold Candles”. No generated candles are displayed.");
-      return;
+      return false;
     }
     setStatus("DELAYED", "Loading XAUUSD historical OHLC candles from Twelve Data…");
     const interval = TIMEFRAMES[state.timeframe].twelve;
@@ -327,9 +342,11 @@
       updateMarketUI();
       setStatus("DELAYED", "XAUUSD spot quote is live; historical candle bars are from Twelve Data and may be delayed by its plan.");
       $("#panel-note").textContent = "Gold spot price comes from Gold API. Chart OHLC history comes from Twelve Data. The latest candle is updated with the live spot quote when available.";
+      return true;
     } catch (error) {
       setNoCandles(`XAUUSD candle history could not be loaded: ${error.message}. The spot price feed can still work independently.`);
       setStatus("DELAYED", "Gold spot quote and historical candle feed are separate connections.");
+      return false;
     }
   }
 
@@ -337,6 +354,15 @@
     closeSocket();
     if (state.btcTickerTimer) window.clearInterval(state.btcTickerTimer);
     state.btcTickerTimer = null;
+    if (state.goldQuoteTimer) window.clearInterval(state.goldQuoteTimer);
+    state.goldQuoteTimer = null;
+    state.goldNative = Boolean(state.goldApiKey.trim());
+
+    if (!state.goldNative) {
+      await loadGoldProxy();
+      return;
+    }
+
     setStatus("DELAYED", "Connecting to Gold API…");
     try {
       await fetchGoldQuote();
@@ -346,14 +372,34 @@
       state.change24h = null;
       updateMarketUI();
     }
-    if (state.goldApiKey) await loadGoldCandles();
-    else setNoCandles("Gold spot price is live. To show genuine historical XAUUSD OHLC candles, enter a Twelve Data API key and press “Load Gold Candles”. No generated candles are displayed.");
-    if (state.goldQuoteTimer) window.clearInterval(state.goldQuoteTimer);
+    const nativeOk = await loadGoldCandles();
+    if (!nativeOk) {
+      state.goldNative = false;
+      toast("Twelve Data key failed — loading Binance gold candles");
+      await loadGoldProxy();
+      return;
+    }
     state.goldQuoteTimer = window.setInterval(async () => {
       if (state.pair !== "XAUUSD" || document.hidden) return;
       try { await fetchGoldQuote(); }
       catch (error) { setStatus("OFFLINE", `Gold API quote failed: ${error.message}`); }
     }, 30000);
+  }
+
+  async function loadGoldProxy() {
+    closeSocket();
+    const interval = TIMEFRAMES[state.timeframe].binance;
+    setStatus("DELAYED", "Loading real gold market candles from Binance…");
+    try {
+      await fetchBinanceSeries("PAXGUSDT", interval);
+      setStatus("DELAYED", "Gold candles loaded. Connecting to the live Binance candle stream…");
+      $("#panel-note").textContent = "Gold chart uses Binance PAXGUSDT — PAX Gold, a gold-backed token that tracks the XAU/USD spot price. Candles and MA-13 are computed from real exchange closes. No fabricated bars. A Twelve Data key is optional for native XAU/USD candles.";
+      startTickerPoll("PAXGUSDT", "XAUUSD");
+      connectBinanceSocket("paxgusdt", interval, "XAUUSD");
+    } catch (error) {
+      setStatus("OFFLINE", `Gold market data could not be loaded: ${error.message}. Check your connection and try again.`);
+      setNoCandles("XAUUSD market data is currently unavailable. No sample candles are shown.");
+    }
   }
 
   async function loadCurrentMarket() {
@@ -404,7 +450,7 @@
         ctx.fillStyle = "rgba(212,175,55,.85)";
         ctx.font = "12px 'JetBrains Mono', monospace";
         ctx.textAlign = "center";
-        ctx.fillText(state.pair === "XAUUSD" ? "LIVE GOLD PRICE · CANDLE HISTORY REQUIRES API KEY" : "WAITING FOR REAL BTCUSDT CANDLES", width / 2, height / 2);
+        ctx.fillText(state.pair === "XAUUSD" ? "WAITING FOR REAL GOLD MARKET CANDLES" : "WAITING FOR REAL BTCUSDT CANDLES", width / 2, height / 2);
         return;
       }
 
