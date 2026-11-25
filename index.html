@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=20261126" />
+  <link rel="stylesheet" href="style.css?v=20261128" />
 </head>
 <body>
 
@@ -105,7 +105,7 @@
 
         <button type="button" class="btn btn--gold" id="nav-scan">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>
-          <span>Refresh Data</span>
+          <span>Easy Scan</span>
         </button>
         <button type="button" class="nav__burger" id="nav-burger" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -256,14 +256,14 @@
 
                 <div class="chart-stage__legend">
                   <span class="legend-pill"><span class="legend-line legend-line--ma"></span> MA 13 EQUILIBRIUM</span>
-                  <span class="legend-pill legend-pill--zones is-hidden" id="zone-badge">AI ZONES · ENTRY / SL / TP1–3</span>
+                  <span class="legend-pill legend-pill--zones is-hidden" id="zone-badge">EASY SCAN · ENTRY / SL / TP1–3</span>
                 </div>
 
                 <div class="scan-overlay is-hidden" id="scan-overlay">
                   <span class="laser"></span>
                   <div class="scan-box">
-                    <span class="scan-box__eyebrow">KAIZZ NEURAL DIAGNOSTICS</span>
-                    <span class="scan-box__step" id="scan-step">Detecting liquidity sweep…</span>
+                    <span class="scan-box__eyebrow">KAIZZ EASY SCAN</span>
+                    <span class="scan-box__step" id="scan-step">Reading real candles…</span>
                     <div class="scan-box__bar"><span id="scan-bar"></span></div>
                     <span class="scan-box__pct" id="scan-pct">0%</span>
                   </div>
@@ -276,7 +276,7 @@
                 <span class="chart-foot__note"><span class="dot dot--gold"></span> Provider OHLC candles · MA-13 computed from real closes</span>
                 <button type="button" class="btn btn--gold btn--scan" id="scan-btn">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9h6v6H9z"/></svg>
-                  <span>Refresh Market Data</span>
+                  <span>Run Easy Scan</span>
                 </button>
               </div>
             </div>
@@ -306,9 +306,24 @@
               <div><span>MA-13</span><b id="panel-ma">—</b></div>
               <div><span>PRICE vs MA-13</span><b id="panel-relation">—</b></div>
             </div>
+            <div class="scan-levels" id="scan-levels">
+              <div class="scan-levels__head">
+                <span class="micro">EASY SCAN · TECHNICAL LEVELS</span>
+                <span class="scan-levels__dir is-wait" id="scan-direction">WAIT</span>
+              </div>
+              <div class="scan-levels__grid">
+                <div><span>ENTRY</span><b id="scan-entry">—</b></div>
+                <div><span>STOP LOSS</span><b id="scan-sl">—</b></div>
+                <div><span>TP 1</span><b id="scan-tp1">—</b></div>
+                <div><span>TP 2</span><b id="scan-tp2">—</b></div>
+                <div><span>TP 3</span><b id="scan-tp3">—</b></div>
+                <div><span>RISK 1R</span><b id="scan-risk">—</b></div>
+              </div>
+              <p class="scan-levels__note" id="scan-method">Levels are calculated from the last real candles: side from price vs MA-13 (WAIT inside a thin ATR band), stop at 1.5 × ATR(14) from entry, targets at 1R / 2R / 3R. Educational only — not financial advice; no orders are placed.</p>
+            </div>
             <div class="signal__note">
               <span class="micro">DATA INTEGRITY</span>
-              <p id="panel-note">This dashboard displays market data only. No trade signals, entries, stop losses or profit targets are generated.</p>
+              <p id="panel-note">Easy Scan derives entry, stop-loss and target levels from real candles with a fixed, published rule set. Levels are illustrative, not advice, and no orders are placed.</p>
             </div>
             <p class="micro signal__disclaimer">Read-only market information · not a trading recommendation</p>
           </aside>
@@ -368,7 +383,7 @@
     </div>
 
     <div class="container footer__legal">
-      <p><strong>Important:</strong> KAIZZ is a read-only educational market-data display. Prices and candles are supplied by external providers and may be delayed, incomplete or unavailable. The dashboard does not connect to a broker, place orders, or provide buy/sell recommendations. Market data is not financial advice.</p>
+      <p><strong>Important:</strong> KAIZZ is a read-only educational market-data display. Prices and candles are supplied by external providers and may be delayed, incomplete or unavailable. The dashboard does not connect to a broker or place orders. Easy Scan is a rule-based technical readout of the chart, not a recommendation. Market data is not financial advice.</p>
       <p class="footer__copy">© <span id="year">2026</span> KAIZZ · Read-only market data · All rights reserved.</p>
     </div>
   </footer>
@@ -378,6 +393,6 @@
     <span id="toast-msg">Market data updated</span>
   </div>
 
-  <script src="script.js?v=20261126" defer></script>
+  <script src="script.js?v=20261128" defer></script>
 </body>
 </html>
