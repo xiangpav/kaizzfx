@@ -224,7 +224,7 @@
     const steps = [
       "Reading real candles…",
       "Measuring MA-13 trend…",
-      "Locating recent swing…",
+      "Measuring volatility (ATR)…",
       "Projecting 1R / 2R / 3R levels…"
     ];
     overlay.classList.remove("is-hidden");
