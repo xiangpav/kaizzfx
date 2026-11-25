@@ -2,8 +2,9 @@
 
 A public, single-page, read-only market data terminal for the **KAIZZ** brand:
 an obsidian-and-gold dashboard with real gold and Bitcoin prices, real OHLC candles,
-a calculated MA-13 and a live candlestick stream. No simulated prices, no buy/sell
-signals, no order execution.
+a calculated MA-13, a live candlestick stream and an Easy Scan panel that derives
+entry, stop-loss and 1R/2R/3R targets from those real candles. No simulated prices,
+no order execution.
 
 **Live site:** https://xiangpav.github.io/kaizzfx/
 
@@ -28,8 +29,24 @@ falls back to the Binance gold candles automatically.
 - Real candlestick desk with MA-13, timeframes M5/M15/M30/H1 and pair switch.
 - Live BTCUSDT stream plus 24-hour high/low/change.
 - Feed status (LIVE / DELAYED / OFFLINE) derived from real provider timestamps.
+- Easy Scan: BUY / SELL / WAIT with entry, stop loss and TP1-TP3, drawn on the chart.
 - No fabricated candles: when a provider is unavailable the chart stays empty and
   says so.
+
+## Easy Scan methodology
+
+Easy Scan is a fixed, transparent rule set, recomputed on every candle update:
+
+1. **Side** — BUY when the latest close is above the MA-13, SELL when it is below.
+   If the close sits within 0.15 x ATR(14) of the MA-13 the panel shows **WAIT**
+   and no levels.
+2. **Entry** — the latest real close.
+3. **Stop loss** — 1.5 x ATR(14) away from entry, so the stop scales with current
+   volatility instead of jumping after a sharp move.
+4. **Targets** — TP1 / TP2 / TP3 at 1R / 2R / 3R, where R is entry-to-stop distance.
+
+The levels are illustrative arithmetic on real prices, not a recommendation, and the
+site never connects to a broker or places orders.
 
 ## Run locally
 
@@ -48,6 +65,6 @@ host (Netlify, Vercel, Cloudflare Pages) also works — upload the three files.
 ## Disclaimer
 
 KAIZZ is a read-only educational market-data display. Prices and candles come from
-external providers and may be delayed, incomplete or unavailable. The dashboard does
-not connect to a broker, place orders, or provide trading recommendations. Nothing
-here is financial advice.
+external providers and may be delayed, incomplete or unavailable. Easy Scan is a
+rule-based technical readout of the chart, not a recommendation. The dashboard does
+not connect to a broker or place orders. Nothing here is financial advice.
