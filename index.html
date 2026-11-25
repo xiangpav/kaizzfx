@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>KAIZZ — Luxury Neural Trading Terminal</title>
-  <meta name="description" content="KAIZZ is a luxury AI trading terminal concept: 3D neural core, live-style charts, BUY / SELL signals with entry, SL and TP1–TP3, plus a sovereign lot and risk engine." />
+  <meta name="description" content="KAIZZ is a read-only market data dashboard for live gold and Bitcoin prices, real market candles and a calculated MA-13." />
   <meta name="theme-color" content="#050507" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="KAIZZ — Luxury Neural Trading Terminal" />
-  <meta property="og:description" content="A luxury AI trading terminal concept: interactive 3D neural core, live-style charts, BUY / SELL signals with entry, SL and TP1–TP3, and a sovereign lot & risk engine." />
+  <meta property="og:description" content="A luxury read-only market dashboard with real gold and Bitcoin data." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="KAIZZ — Luxury Neural Trading Terminal" />
-  <meta name="twitter:description" content="Precision gold & FX intelligence in obsidian and gold. Simulated analytics, interactive 3D core, signals and risk sizing." />
+  <meta name="twitter:description" content="Real market prices and educational charts in obsidian and gold." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050507'/%3E%3Cpolygon points='32,6 54,17 58,38 46,57 18,57 6,38 10,17' fill='none' stroke='%23D4AF37' stroke-width='2'/%3E%3Cpath d='M25 20v24M25 33l13-13M28 30l12 14' stroke='%23F3E5AB' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -58,15 +58,15 @@
     <div class="ticker-bar">
       <div class="ticker-bar__status">
         <span class="dot dot--live"></span>
-        <span class="label">KILLZONE</span>
+        <span class="label">MARKET DATA</span>
         <span class="chip chip--gold" id="killzone-chip">NY / LONDON OVERLAP</span>
       </div>
       <div class="ticker-bar__viewport" aria-hidden="true">
         <div class="ticker-track" id="ticker-track"></div>
       </div>
       <div class="ticker-bar__meta">
-        <span>NEURAL ENGINE v4.9</span>
-        <span class="chip chip--emerald">99.98% UPTIME</span>
+        <span>MARKET DATA ENGINE</span>
+        <span class="chip chip--emerald" id="header-feed-status">CONNECTING</span>
         <span class="ticker-bar__clock" id="utc-clock">--:--:-- UTC</span>
       </div>
     </div>
@@ -92,22 +92,20 @@
             <span class="brand__name">KAIZZ</span>
             <span class="badge-soft">BANE LUXURY</span>
           </span>
-          <span class="brand__tag">Institutional Liquidity &amp; Neural Execution</span>
+          <span class="brand__tag">Institutional-Grade Market Data</span>
         </span>
       </a>
 
       <div class="nav__links" id="nav-links">
         <a href="#terminal" data-nav>Terminal</a>
-        <a href="#vault" data-nav>Signal Vault</a>
-        <a href="#risk" data-nav>Risk Engine</a>
         <a href="#doctrine" data-nav>Doctrine</a>
       </div>
 
       <div class="nav__actions">
-        <button type="button" class="btn btn--ghost nav__hide-sm" id="nav-vision">Vision AI</button>
+
         <button type="button" class="btn btn--gold" id="nav-scan">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>
-          <span>Scan AI</span>
+          <span>Refresh Data</span>
         </button>
         <button type="button" class="nav__burger" id="nav-burger" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -123,46 +121,26 @@
       <div class="hero__copy" data-reveal>
         <div class="eyebrow">
           <span class="dot dot--live"></span>
-          PRIVATE SOVEREIGN ALGORITHMIC SUITE · MA-13 + ORDER BLOCKS
+          LIVE MARKET DATA TERMINAL · REAL OHLC + MA-13
         </div>
 
         <h1 class="hero__title">
-          <span class="hero__line">Precision <span class="gold-text">Gold &amp; FX</span></span>
-          <span class="hero__line">Neural Intelligence</span>
+          <span class="hero__line">Real <span class="gold-text">Market Data</span></span>
+          <span class="hero__line">Gold &amp; Bitcoin Terminal</span>
         </h1>
 
         <p class="hero__lede">
-          Engineered for execution. <strong>KAIZZ</strong> reads liquidity sweeps, the MA-13 dynamic
-          equilibrium and session momentum, then returns a <span class="txt-up">BUY</span> or
-          <span class="txt-down">SELL</span> zone with exact <span class="txt-down mono">SL</span> and
-          multi-tier <span class="txt-up mono">TP1–TP3</span> targets.
+          A read-only market terminal for <strong>KAIZZ</strong>. View provider-sourced XAUUSD and BTCUSDT prices,
+          real OHLC candles and a 13-period moving average calculated from the candle closes.
         </p>
 
         <div class="hero__cta">
           <a href="#terminal" class="btn btn--gold btn--lg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            Open Live Terminal
+            Open Market Terminal
           </a>
-          <a href="#risk" class="btn btn--ghost btn--lg">Position Calculator</a>
+          <a href="#doctrine" class="btn btn--ghost btn--lg">Data Methodology</a>
         </div>
-
-        <dl class="hero__stats">
-          <div class="stat">
-            <dt>Model Hit Rate</dt>
-            <dd class="stat__value" data-count="94.6" data-decimals="1" data-suffix="%">0%</dd>
-            <dd class="stat__sub txt-up">Simulated · this week</dd>
-          </div>
-          <div class="stat">
-            <dt>Avg Risk : Reward</dt>
-            <dd class="stat__value stat__value--light" data-count="3.8" data-decimals="1" data-prefix="1 : ">1 : 0</dd>
-            <dd class="stat__sub txt-gold">Target R:R</dd>
-          </div>
-          <div class="stat">
-            <dt>Scan Latency</dt>
-            <dd class="stat__value stat__value--up" data-count="0.42" data-decimals="2" data-suffix="s">0s</dd>
-            <dd class="stat__sub">Neural Core v4</dd>
-          </div>
-        </dl>
       </div>
 
       <div class="hero__visual" data-reveal data-reveal-delay="120">
@@ -175,19 +153,19 @@
             <canvas id="core-canvas"></canvas>
             <span class="core-panel__halo"></span>
             <span class="core-panel__scan"></span>
-            <span class="core-panel__badge">SIGNAL LOCKED · XAUUSD</span>
+            <span class="core-panel__badge">MARKET DATA · READ ONLY</span>
           </div>
           <div class="core-panel__hud">
-            <span class="hud-chip">XAUUSD BIAS: <strong class="txt-up" id="hud-bias">BULLISH</strong></span>
-            <span class="hud-chip">MA-13 DELTA: <strong class="txt-gold" id="hud-delta">+4.82</strong></span>
+            <span class="hud-chip">XAUUSD BIAS: <strong class="txt-up" id="hud-bias">DATA</strong></span>
+            <span class="hud-chip">MA-13 DELTA: <strong class="txt-gold" id="hud-delta">—</strong></span>
           </div>
         </div>
         <div class="hero__float hero__float--one">
-          <span class="hero__float-label">AI CONFIDENCE</span>
-          <span class="hero__float-value gold-text">96.8%</span>
+          <span class="hero__float-label">MARKET MODE</span>
+          <span class="hero__float-value gold-text">READ ONLY</span>
         </div>
         <div class="hero__float hero__float--two">
-          <span class="dot dot--live"></span> 4 markets · simulated feed
+          <span class="dot dot--gold"></span> Provider-sourced data
         </div>
       </div>
     </section>
@@ -195,8 +173,8 @@
     <!-- ░░ MARQUEE ░░ -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee__track">
-        <span>LIQUIDITY SWEEPS</span><i>✦</i><span>ORDER BLOCKS</span><i>✦</i><span>MA-13 EQUILIBRIUM</span><i>✦</i><span>SL / TP ENGINE</span><i>✦</i><span>SESSION KILLZONES</span><i>✦</i><span>RISK DISCIPLINE</span><i>✦</i>
-        <span>LIQUIDITY SWEEPS</span><i>✦</i><span>ORDER BLOCKS</span><i>✦</i><span>MA-13 EQUILIBRIUM</span><i>✦</i><span>SL / TP ENGINE</span><i>✦</i><span>SESSION KILLZONES</span><i>✦</i><span>RISK DISCIPLINE</span><i>✦</i>
+        <span>MARKET DATA</span><i>✦</i><span>REAL CANDLES</span><i>✦</i><span>MA-13 EQUILIBRIUM</span><i>✦</i><span>OHLC DATA</span><i>✦</i><span>MARKET TIMESTAMPS</span><i>✦</i><span>RISK DISCIPLINE</span><i>✦</i>
+        <span>MARKET DATA</span><i>✦</i><span>REAL CANDLES</span><i>✦</i><span>MA-13 EQUILIBRIUM</span><i>✦</i><span>OHLC DATA</span><i>✦</i><span>MARKET TIMESTAMPS</span><i>✦</i><span>RISK DISCIPLINE</span><i>✦</i>
       </div>
     </div>
 
@@ -204,36 +182,29 @@
     <section class="section container" id="terminal">
       <header class="section__head" data-reveal>
         <div>
-          <div class="eyebrow">AI SCAN TERMINAL</div>
-          <h2 class="section__title">The <span class="gold-text">Execution Desk</span></h2>
+          <div class="eyebrow">LIVE MARKET TERMINAL</div>
+          <h2 class="section__title">The <span class="gold-text">Market Desk</span></h2>
         </div>
         <p class="section__sub">
-          Two engines, one verdict. Stream a live-style chart or decode a broker screenshot, then let the
-          neural core stamp direction, entry, stop and targets.
+          Select XAUUSD or BTCUSDT to view provider-sourced prices, actual OHLC candles and a calculated MA-13.
         </p>
       </header>
 
       <div class="terminal" data-reveal>
         <div class="terminal__toolbar">
-          <div class="tabs" role="tablist" aria-label="Scanner mode">
+          <div class="tabs" role="tablist" aria-label="Market chart mode">
             <button type="button" class="tab is-active" id="tab-live" role="tab" aria-selected="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 2 4-6"/></svg>
-              Live Neural Chart
-            </button>
-            <button type="button" class="tab" id="tab-vision" role="tab" aria-selected="false">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"/><circle cx="12" cy="12.5" r="3"/></svg>
-              Vision Screenshot Scan
+              Live Market Chart
             </button>
           </div>
 
           <div class="toolbar__right" id="live-controls">
-            <div class="segmented" id="pair-selector" aria-label="Asset pair">
+            <div class="segmented" id="pair-selector" aria-label="Market pair">
               <button type="button" class="seg is-active" data-pair="XAUUSD">XAUUSD</button>
-              <button type="button" class="seg" data-pair="XAGUSD">XAGUSD</button>
               <button type="button" class="seg" data-pair="BTCUSDT">BTCUSDT</button>
-              <button type="button" class="seg" data-pair="GBPUSD">GBPUSD</button>
             </div>
-            <div class="segmented segmented--small" id="tf-selector" aria-label="Timeframe">
+            <div class="segmented segmented--small" id="tf-selector" aria-label="Chart timeframe">
               <button type="button" class="seg" data-tf="M5">M5</button>
               <button type="button" class="seg is-active" data-tf="M15">M15</button>
               <button type="button" class="seg" data-tf="M30">M30</button>
@@ -245,6 +216,13 @@
           </div>
         </div>
 
+        <div class="market-keybar" id="gold-keybar">
+          <label for="gold-api-key">XAUUSD candle history key <span>(optional)</span></label>
+          <input id="gold-api-key" type="password" autocomplete="off" placeholder="Paste your Twelve Data API key to load gold candles" />
+          <button type="button" class="btn btn--ghost btn--sm" id="connect-gold-key">Load Gold Candles</button>
+          <span class="market-keybar__hint">Gold spot price is keyless. Historical XAUUSD candles need a provider key.</span>
+        </div>
+
         <div class="terminal__grid">
           <div class="terminal__chartcol">
 
@@ -254,20 +232,21 @@
                 <div class="chart-head__id">
                   <span class="chart-head__pair" id="chart-pair">XAUUSD</span>
                   <span class="chart-head__tf" id="chart-tf">M15</span>
-                  <span class="chart-head__feed">SPOT GOLD · SIMULATED FEED</span>
+                  <span class="chart-head__feed" id="data-source">Waiting for market provider…</span>
+                  <span class="market-status is-offline" id="market-status">OFFLINE</span>
                 </div>
                 <div class="chart-head__quotes">
                   <div>
                     <span class="micro">LIVE BID</span>
-                    <span class="chart-head__price" id="chart-price">2748.50</span>
+                    <span class="chart-head__price" id="chart-price">—</span>
                   </div>
                   <div>
                     <span class="micro">MA-13</span>
-                    <span class="chart-head__ma" id="chart-ma">2744.10</span>
+                    <span class="chart-head__ma" id="chart-ma">—</span>
                   </div>
                   <div>
                     <span class="micro">24H</span>
-                    <span class="chart-head__chg txt-up" id="chart-change">+1.48%</span>
+                    <span class="chart-head__chg txt-up" id="chart-change">—</span>
                   </div>
                 </div>
               </div>
@@ -290,196 +269,49 @@
                   </div>
                 </div>
 
-                <div class="chart-stage__watermark">KAIZZ · MA-13</div>
+                <div class="chart-stage__watermark">KAIZZ · REAL MARKET DATA</div>
               </div>
 
               <div class="chart-foot">
-                <span class="chart-foot__note"><span class="dot dot--gold"></span> Order-block + MA-13 confluence · computed in-browser</span>
+                <span class="chart-foot__note"><span class="dot dot--gold"></span> Provider OHLC candles · MA-13 computed from real closes</span>
                 <button type="button" class="btn btn--gold btn--scan" id="scan-btn">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9h6v6H9z"/></svg>
-                  <span>Initiate AI Scan</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- VISION MODE -->
-            <div id="mode-vision" class="is-hidden">
-              <div class="chart-head">
-                <div class="chart-head__id">
-                  <span class="chart-head__pair">VISION DECODER</span>
-                  <span class="chart-head__tf">OCR</span>
-                  <span class="chart-head__feed">OPTICAL CANDLE RECOGNITION</span>
-                </div>
-                <button type="button" class="btn btn--ghost btn--sm" id="vision-sample">Load sample chart</button>
-              </div>
-
-              <div class="vision-stage" id="vision-stage">
-                <input type="file" id="vision-input" accept="image/*" class="visually-hidden" />
-                <button type="button" class="vision-drop" id="vision-drop">
-                  <span class="vision-drop__icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m4 17 5-5 4 4 3-3 4 4"/><circle cx="9" cy="8.5" r="1.4"/></svg>
-                  </span>
-                  <span class="vision-drop__title">Drop an MT5 / TradingView screenshot</span>
-                  <span class="vision-drop__sub">PNG, JPG or WEBP · analysed locally, never uploaded</span>
-                </button>
-                <canvas id="vision-canvas" class="is-hidden"></canvas>
-
-                <div class="scan-overlay is-hidden" id="vision-overlay">
-                  <span class="laser"></span>
-                  <div class="scan-box">
-                    <span class="scan-box__eyebrow">OPTICAL CANDLESTICK RECOGNITION</span>
-                    <span class="scan-box__step" id="vision-step">Mapping support &amp; resistance…</span>
-                    <div class="scan-box__bar"><span id="vision-bar"></span></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="chart-foot">
-                <span class="chart-foot__note"><span class="dot dot--gold"></span> Demo decoder · levels are simulated</span>
-                <button type="button" class="btn btn--gold btn--scan" id="vision-scan-btn">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-                  <span>Decode Screenshot</span>
+                  <span>Refresh Market Data</span>
                 </button>
               </div>
             </div>
 
           </div>
-
-          <!-- SIGNAL CARD -->
-          <aside class="signal" id="signal-card" aria-live="polite">
+          <!-- LIVE DATA PANEL -->
+          <aside class="signal market-panel" id="market-panel" aria-live="polite">
             <span class="signal__glow"></span>
             <div class="signal__head">
               <div>
-                <span class="micro gold-text">KAIZZ VIP EXECUTION</span>
-                <h3 class="signal__pair" id="sig-pair">XAUUSD · M15</h3>
+                <span class="micro gold-text">KAIZZ MARKET MONITOR</span>
+                <h3 class="signal__pair" id="panel-pair">XAUUSD · SPOT</h3>
               </div>
               <div class="signal__conf">
-                <span class="micro">AI CONFIDENCE</span>
-                <span class="signal__conf-value" id="sig-conf">96.8%</span>
+                <span class="micro">FEED STATUS</span>
+                <span class="signal__conf-value" id="panel-status">OFFLINE</span>
               </div>
             </div>
-
-            <div class="signal__action is-up" id="sig-action">
-              <div>
-                <span class="micro">SIGNAL DIRECTION</span>
-                <strong id="sig-dir">BUY NOW</strong>
-              </div>
-              <span class="signal__arrow" id="sig-arrow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M8 6h10v10"/></svg>
-              </span>
+            <div class="market-panel__quote">
+              <span class="micro">LATEST PROVIDER PRICE</span>
+              <strong id="panel-price">—</strong>
+              <span id="panel-change" class="market-panel__change">24H CHANGE: —</span>
             </div>
-
-            <div class="levels">
-              <div class="level level--entry">
-                <span class="level__label">ENTRY PRICE</span>
-                <span class="level__value" id="sig-entry">2748.50</span>
-              </div>
-              <div class="level level--sl">
-                <span class="level__label">STOP LOSS</span>
-                <span class="level__value" id="sig-sl">2743.50</span>
-              </div>
-              <div class="level-row">
-                <div class="level level--tp"><span class="level__label">TP 1</span><span class="level__value" id="sig-tp1">2752.50</span></div>
-                <div class="level level--tp"><span class="level__label">TP 2</span><span class="level__value" id="sig-tp2">2757.00</span></div>
-                <div class="level level--tp"><span class="level__label">TP 3</span><span class="level__value" id="sig-tp3">2763.50</span></div>
-              </div>
+            <div class="market-panel__rows">
+              <div><span>DATA SOURCE</span><b id="panel-source">—</b></div>
+              <div><span>LAST UPDATE</span><b id="panel-updated">Waiting for data</b></div>
+              <div><span>MA-13</span><b id="panel-ma">—</b></div>
+              <div><span>PRICE vs MA-13</span><b id="panel-relation">—</b></div>
             </div>
-
             <div class="signal__note">
-              <span class="micro">NEURAL CONFLUENCE</span>
-              <p id="sig-note">Price retested the dynamic MA-13 above an M15 bullish order block with clean session momentum.</p>
+              <span class="micro">DATA INTEGRITY</span>
+              <p id="panel-note">This dashboard displays market data only. No trade signals, entries, stop losses or profit targets are generated.</p>
             </div>
-
-            <div class="signal__foot">
-              <span class="micro" id="sig-time">Updated just now</span>
-              <button type="button" class="btn btn--ghost btn--sm" id="copy-signal">Copy signal</button>
-            </div>
-            <p class="micro signal__disclaimer">Simulated analytics · not financial advice</p>
+            <p class="micro signal__disclaimer">Read-only market information · not a trading recommendation</p>
           </aside>
-        </div>
-      </div>
-    </section>
-
-    <!-- ░░ VAULT ░░ -->
-    <section class="section container" id="vault">
-      <header class="section__head" data-reveal>
-        <div>
-          <div class="eyebrow">SIMULATED TRACK RECORD <span class="chip chip--emerald">+1,480 PIPS THIS MONTH</span></div>
-          <h2 class="section__title">The Signal <span class="gold-text">Vault</span></h2>
-        </div>
-        <p class="section__sub">A running ledger of recent model output, from entry to final take-profit. Simulated for demonstration.</p>
-      </header>
-
-      <div class="vault" id="vault-grid" data-reveal></div>
-
-      <div class="vault__stats" data-reveal>
-        <div class="vault__stat"><span class="micro">Closed this month</span><strong>128</strong></div>
-        <div class="vault__stat"><span class="micro">Hit TP1 or better</span><strong>94.6%</strong></div>
-        <div class="vault__stat"><span class="micro">Avg RR realised</span><strong>1 : 3.8</strong></div>
-        <div class="vault__stat"><span class="micro">Max drawdown (model)</span><strong class="txt-down">4.1%</strong></div>
-      </div>
-    </section>
-
-    <!-- ░░ RISK ░░ -->
-    <section class="section container" id="risk">
-      <header class="section__head" data-reveal>
-        <div>
-          <div class="eyebrow">CAPITAL PROTECTION</div>
-          <h2 class="section__title">Sovereign <span class="gold-text">Lot &amp; Risk Engine</span></h2>
-        </div>
-        <p class="section__sub">Size every position from the risk first. Adjust the inputs and the engine recomputes your lot size instantly.</p>
-      </header>
-
-      <div class="risk" data-reveal>
-        <form class="risk__form" id="risk-form" autocomplete="off">
-          <div class="field">
-            <label for="risk-balance">Account balance (USD)</label>
-            <div class="field__control"><span class="field__prefix">$</span><input id="risk-balance" type="number" min="100" step="100" value="25000" /></div>
-          </div>
-
-          <div class="field">
-            <label for="risk-percent">Risk per trade <span class="field__hint" id="risk-percent-hint">1.5%</span></label>
-            <input id="risk-percent" class="range" type="range" min="0.25" max="5" step="0.25" value="1.5" />
-          </div>
-
-          <div class="field">
-            <label for="risk-sl">Stop loss (pips / points)</label>
-            <div class="field__control"><input id="risk-sl" type="number" min="1" step="1" value="75" /></div>
-          </div>
-
-          <div class="field">
-            <label for="risk-instrument">Instrument</label>
-            <div class="field__control field__control--select">
-              <select id="risk-instrument">
-                <option value="XAUUSD" selected>XAUUSD · Gold</option>
-                <option value="XAGUSD">XAGUSD · Silver</option>
-                <option value="BTCUSDT">BTCUSDT · Bitcoin</option>
-                <option value="GBPUSD">GBPUSD · Sterling</option>
-              </select>
-              <svg class="field__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-            </div>
-          </div>
-
-          <button type="button" class="btn btn--gold btn--block" id="risk-apply">Apply to current signal</button>
-        </form>
-
-        <div class="risk__result">
-          <span class="risk__result-label micro">RECOMMENDED LOT SIZE</span>
-          <div class="risk__lots"><span id="risk-lots">0.50</span><em>LOTS</em></div>
-
-          <div class="risk__metrics">
-            <div><span class="micro">Max risk amount</span><strong class="txt-down" id="risk-amount">$375.00</strong></div>
-            <div><span class="micro">Value per pip</span><strong id="risk-pip">$10.00</strong></div>
-            <div><span class="micro">Contracts</span><strong id="risk-contracts">0.50</strong></div>
-          </div>
-
-          <div class="risk__gauge">
-            <div class="risk__gauge-head"><span class="micro">Risk allocation</span><span class="micro" id="risk-gauge-label">1.5% of equity</span></div>
-            <div class="risk__gauge-track"><span id="risk-gauge-fill"></span></div>
-            <div class="risk__gauge-foot"><span>0%</span><span class="chip chip--emerald" id="risk-verdict">Within mandate</span><span>5%</span></div>
-          </div>
-
-          <p class="risk__note">Sizing is an educational approximation. Confirm contract specifications with your broker before trading.</p>
         </div>
       </div>
     </section>
@@ -488,25 +320,26 @@
     <section class="section container" id="doctrine">
       <header class="section__head" data-reveal>
         <div>
-          <div class="eyebrow">THE KAIZZ DOCTRINE</div>
-          <h2 class="section__title">Built like an <span class="gold-text">institution</span></h2>
+          <div class="eyebrow">DATA METHODOLOGY</div>
+          <h2 class="section__title">Transparent <span class="gold-text">Market Feeds</span></h2>
         </div>
+        <p class="section__sub">KAIZZ separates provider quotes from chart history and clearly reports when a feed is delayed or unavailable.</p>
       </header>
       <div class="cards">
         <article class="card" data-reveal>
           <span class="card__index">01</span>
-          <h3>Liquidity mapping</h3>
-          <p>Session highs, lows and imbalance zones are mapped before a single candle is trusted. Sweeps come first, entries second.</p>
+          <h3>XAUUSD · Gold</h3>
+          <p>Spot price from Gold API. Candle history is loaded from Twelve Data when a key is supplied. The chart is not filled with fabricated bars.</p>
         </article>
         <article class="card" data-reveal data-reveal-delay="80">
           <span class="card__index">02</span>
-          <h3>MA-13 equilibrium</h3>
-          <p>The 13-period mean defines the institutional axis. Price above it is bid, below it is offered. Everything is aligned to that line.</p>
+          <h3>BTCUSDT · Bitcoin</h3>
+          <p>Public Binance market-data endpoints provide historical OHLC candles, 24-hour statistics and a live candlestick stream.</p>
         </article>
         <article class="card" data-reveal data-reveal-delay="160">
           <span class="card__index">03</span>
-          <h3>Risk before reward</h3>
-          <p>Every signal ships with a hard stop and a sized position. No stop means no trade — the engine refuses to output one.</p>
+          <h3>MA-13 · Calculated</h3>
+          <p>The moving average is calculated from the latest 13 real candle closing prices. It is an educational indicator, not a forecast.</p>
         </article>
       </div>
     </section>
@@ -523,28 +356,26 @@
               <path d="M24 20v24M24 32.5l14-12M27 28l12 16" stroke="#F3E5AB" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </span>
-          <span class="brand__text"><span class="brand__name">KAIZZ</span><span class="brand__tag">Bane Luxury · Neural Execution</span></span>
+          <span class="brand__text"><span class="brand__name">KAIZZ</span><span class="brand__tag">Bane Luxury · Market Data</span></span>
         </div>
-        <p class="footer__tagline">Precision gold &amp; FX intelligence, wrapped in obsidian and gold.</p>
+        <p class="footer__tagline">Real gold and Bitcoin market data, wrapped in obsidian and gold.</p>
       </div>
 
       <nav class="footer__links" aria-label="Footer">
         <a href="#terminal">Terminal</a>
-        <a href="#vault">Signal Vault</a>
-        <a href="#risk">Risk Engine</a>
-        <a href="#doctrine">Doctrine</a>
+        <a href="#doctrine">Data Methodology</a>
       </nav>
     </div>
 
     <div class="container footer__legal">
-      <p><strong>Important:</strong> KAIZZ is a design demonstration. Every price, scan, signal, win rate and performance figure on this page is simulated in your browser. Nothing here is financial advice, a recommendation, or a promise of profit. No broker, exchange or MT5 connection is made and no orders are placed. Leveraged gold, FX and crypto trading carries a high risk of loss.</p>
-      <p class="footer__copy">© <span id="year">2026</span> KAIZZ · Crafted for demo purposes · All rights reserved.</p>
+      <p><strong>Important:</strong> KAIZZ is a read-only educational market-data display. Prices and candles are supplied by external providers and may be delayed, incomplete or unavailable. The dashboard does not connect to a broker, place orders, or provide buy/sell recommendations. Market data is not financial advice.</p>
+      <p class="footer__copy">© <span id="year">2026</span> KAIZZ · Read-only market data · All rights reserved.</p>
     </div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite">
     <span class="dot dot--gold"></span>
-    <span id="toast-msg">Signal copied to clipboard</span>
+    <span id="toast-msg">Market data updated</span>
   </div>
 
   <script src="script.js" defer></script>
