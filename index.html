@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=20261126" />
 </head>
 <body>
 
@@ -217,10 +217,10 @@
         </div>
 
         <div class="market-keybar" id="gold-keybar">
-          <label for="gold-api-key">XAUUSD candle history key <span>(optional)</span></label>
-          <input id="gold-api-key" type="password" autocomplete="off" placeholder="Paste your Twelve Data API key to load gold candles" />
+          <label for="gold-api-key">Native XAUUSD candles key <span>(optional)</span></label>
+          <input id="gold-api-key" type="password" autocomplete="off" placeholder="Paste your Twelve Data API key for native XAU/USD candles" />
           <button type="button" class="btn btn--ghost btn--sm" id="connect-gold-key">Load Gold Candles</button>
-          <span class="market-keybar__hint">Gold spot price is keyless. Historical XAUUSD candles need a provider key.</span>
+          <span class="market-keybar__hint">Gold candles already load automatically from Binance PAXGUSDT. The key is only for native XAU/USD candles.</span>
         </div>
 
         <div class="terminal__grid">
@@ -329,7 +329,7 @@
         <article class="card" data-reveal>
           <span class="card__index">01</span>
           <h3>XAUUSD · Gold</h3>
-          <p>Spot price from Gold API. Candle history is loaded from Twelve Data when a key is supplied. The chart is not filled with fabricated bars.</p>
+          <p>Gold candles come keylessly from Binance PAXGUSDT, a gold-backed token that tracks the XAU/USD spot price. A Twelve Data key can optionally enable native XAU/USD candles. The chart is never filled with fabricated bars.</p>
         </article>
         <article class="card" data-reveal data-reveal-delay="80">
           <span class="card__index">02</span>
@@ -378,6 +378,6 @@
     <span id="toast-msg">Market data updated</span>
   </div>
 
-  <script src="script.js" defer></script>
+  <script src="script.js?v=20261126" defer></script>
 </body>
 </html>
